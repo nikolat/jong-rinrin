@@ -1,0 +1,21 @@
+//******************************************************************************
+// network update
+//******************************************************************************
+resource.homeurl    { '' }
+resource.useorigin1 { 1 }
+
+//******************************************************************************
+// recommend sites
+//******************************************************************************
+resource.sakura.portalsites
+{
+	"/
+		Disc-2%(CHR(1))http://disc2.s56.xrea.com/%(CHR(1))%(CHR(1))%(CHR(2))/
+	"
+}
+resource.sakura.recommendsites
+{
+	"/
+		yaya-shiori%(CHR(1))https://github.com/ponapalt/yaya-shiori/wiki%(CHR(1))%(CHR(1))%(CHR(2))/
+	"
+}

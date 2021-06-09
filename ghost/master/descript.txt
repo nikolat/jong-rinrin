@@ -1,0 +1,11 @@
+charset,Shift_JIS
+type,ghost
+name,-ƒŠƒ“ƒŠƒ“
+sakura.name,ƒŠƒ“ƒŠƒ“
+kero.name,none
+craftman,Don
+craftmanurl,http://nikolat.herokuapp.com/
+homeurl,
+shiori,yaya.dll
+icon,icon.ico
+sstp.allowunspecifiedsend,0

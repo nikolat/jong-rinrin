@@ -1,0 +1,166 @@
+//**********************************************************
+// LICENSE: CC0 1.0 Universal
+// http://creativecommons.org/publicdomain/zero/1.0/
+//**********************************************************
+
+//**********************************************************
+// 何を切るか
+//**********************************************************
+// ひたすら七対子を目指す
+MJ.Naniwokiru
+{
+	_strTehai = _argv[0]
+	_strKawa  = _argv[1]
+	_arTehai = MJ.MakeArrayFromString(_strTehai)
+	_arKawa  = MJ.MakeArrayFromString(_strKawa)
+	//3枚同じ牌があれば切る
+	_dahai = MJ.Get3SameElement(_arTehai)
+	if _dahai != '' {
+		_dahai
+		return
+	}
+	//過去に切った牌をツモ切り フリテン防止(配列の最後の要素がツモである前提のため注意)
+	_dahai = _arTehai[ARRAYSIZE(_arTehai) - 1]
+	if ASEARCH(_dahai, _arKawa) >= 0 {
+		_dahai
+		return
+	}
+	//1枚のみの牌を切る
+	_dahai = MJ.GetSoloElement(MJ.ShuffleArray(_arTehai))//ランダム性が無いと待ちが字牌に偏る
+	if _dahai != '' {
+		_dahai
+		return
+	}
+	''//それは和了である
+}
+
+//"1m2m3m" -> ("1m", "2m", "3m")変換
+MJ.MakeArrayFromString
+{
+	_s = _argv[0]
+	_r = IARRAY()
+	_i = 0
+	while 1 {
+		_e = SUBSTR(_s, _i, 2)
+		if _e == '' {
+			break
+		}
+		_r ,= _e
+		_i += 2
+	}
+	_r
+}
+
+//ソート
+MJ.SortHai
+{
+	_a = _argv
+	_r = IARRAY()
+	//バブルソートでいいや…
+	while ARRAYSIZE(_a) > 0
+	{
+		_n = ARRAYSIZE(_a)
+		_index = -1
+		_minValue = 99
+		_an = IARRAY()
+		for _i = 0; _i < _n; _i++ {
+			_v = MJ.GetSortCode(_a[_i])
+			if _v < _minValue {
+				if _index >= 0 {
+					_an ,= _a[_index]
+				}
+				_index = _i
+				_minValue = _v
+			}
+			else
+			{
+				_an ,= _a[_i]
+			}
+		}
+		_r ,= _a[_index]
+		_a = _an
+	}
+	_r
+}
+
+//ソート順定義
+MJ.GetSortCode
+{
+	_s = _argv[0]
+	_a = SPLIT('1m,2m,3m,4m,5m,6m,7m,8m,9m,1p,2p,3p,4p,5p,6p,7p,8p,9p,1s,2s,3s,4s,5s,6s,7s,8s,9s,1z,2z,3z,4z,5z,6z,7z', ',')
+	ASEARCH(_s, _a)
+}
+
+MJ.Get3SameElement
+{
+	_a = _argv
+	_n = _argc
+	for _i = 0; _i < _n; _i++ {
+		_num = ARRAYSIZE(ASEARCHEX(_a[_i], _a))
+		if _num >= 3 {
+			_a[_i]
+			return
+		}
+	}
+	''
+}
+
+MJ.GetSoloElement
+{
+	_a = _argv
+	_n = _argc
+	for _i = 0; _i < _n; _i++ {
+		_num = ARRAYSIZE(ASEARCHEX(_a[_i], _a))
+		if _num == 1 {
+			_a[_i]
+			return
+		}
+	}
+	''
+}
+
+MJ.ShuffleArray
+{
+	_a = _argv
+	_r = IARRAY()
+	while ARRAYSIZE(_a) > 0 {
+		_n = ARRAYSIZE(_a)
+		_index = RAND(_n)
+		_r ,= _a[_index]
+		_a[_index] = IARRAY
+	}
+	_r
+}
+
+//**********************************************************
+// 向聴数計算
+//**********************************************************
+//tehaiはソートされてる前提
+MJ.GetShanten
+{
+	//今は七対子のみ
+	MJ.GetShantenChitoitsu(_argv)
+}
+
+MJ.GetShantenChitoitsu
+{
+	_tehai = _argv
+	_nToitsu = 0
+	_nType = 0
+	_baseHai = ''
+	for _i = 0; _i < ARRAYSIZE(_tehai); _i++ {
+		if _baseHai != _tehai[_i] {
+			_nType++
+			_baseHai = _tehai[_i]
+			if _baseHai == _tehai[_i + 1] {
+				_i++
+				_nToitsu++
+			}
+		}
+	}
+	if _nType >= 7 {
+		_nType = 7
+	}
+	_n = 6 - _nToitsu + (7 - _nType)
+	_n
+}

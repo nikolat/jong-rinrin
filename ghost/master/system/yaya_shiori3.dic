@@ -1,0 +1,575 @@
+//******************************************************************************
+/*
+SHIORI/3.0制御スクリプト for YAYA
+original written by umeici.
+履歴
+ver. date     note
+1.0  ?        yaya向けに書き換え by C.Ponapalt
+1.1  20070428 config分離、READFMOを使ったルーチン追加
+1.2  20080323 構造変更（shiori3,config,compatible,optional)
+1.2c 20081015 自己流カスタマイズ by Don
+*/
+//******************************************************************************
+
+#define			C_CRLF2		C_CRLF+C_CRLF		/* 改行コードx2   */
+#define			C_CRLF		CHR(0xd)+CHR(0xa)	/* 改行コード     */
+
+load   { foreach GETFUNCLIST('GOYA.OnSystemLoad')  ; _load   { EVAL(_load)   } }
+unload { foreach GETFUNCLIST('GOYA.OnSystemUnload'); _unload { EVAL(_unload) } }
+request
+{
+	_reqdata   = _argv[0]
+	_linestart = 0
+	_lineend   = STRSTR(_reqdata, C_CRLF, _linestart)
+
+	if _lineend <= 0 {
+		//1行目すらない！
+		"SHIORI/3.0 400 Bad Request%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF2)"
+		return
+	}
+	_lin = SUBSTR(_reqdata,_linestart,(_lineend - _linestart))
+
+	// リクエスト種別とプロトコル名の取得　エラーなら400
+	_command  = _lin[0," SHIORI"]
+
+	// リクエストヘッダの取得
+	var.req.key   = IARRAY
+	var.req.value = IARRAY
+
+	_id = ''
+	status = ''
+
+	while _lineend > _linestart {
+		//行分割
+		_linestart = _lineend + 2
+		_lineend = STRSTR(_reqdata, C_CRLF, _linestart)
+		
+		//空行もしくはみつからなかった
+		if _lineend <= _linestart {
+			break
+		}
+
+		_lin = SUBSTR(_reqdata,_linestart,(_lineend - _linestart))
+
+		// キーと値を取得
+		_len = STRLEN(_lin)
+		_pos = STRSTR(_lin,": ",0)
+		var.req.key ,= (_key = SUBSTR(_lin,0,_pos))
+		_value       = SUBSTR(_lin,(_pos + 2),(_len - _pos - 2))
+
+		// イベントID名称を取得
+		if _key == 'Charset' {
+			if S_CHARSET != _value {
+				void SETSETTING('charset.output',_value)
+				S_CHARSET = _value
+			}
+		} elseif _key == 'ID' {
+			_id = _value
+
+			// ハンドラが無い場合は即返る
+			if !GOYA.IsImportantEvent(_id) {
+				if !ISFUNC(GOYA.MakeEventHandler(_id,_command)) {
+					GOYA.MakeEmptyResponse(_id)
+					return
+				}
+			}
+		} elseif _key == 'SecurityLevel' {
+			// セキュリティレベル="External"なら即返る
+			if _value == 'External' {
+				"SHIORI/3.0 204 No Content%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF2)"
+				return
+			}
+		} elseif _key == 'Sender' {
+			// Sender取得
+			sender = _value
+		} elseif _key == 'Status' {
+			// Status取得
+			status = _value
+		}
+		// キーと値を記憶
+		if TOSTR(TOAUTO(_value)) == _value {
+			var.req.value ,= TOAUTO(_value)
+		} else {
+			var.req.value ,= _value
+		}
+	}
+	GOYA.OnRequest(_id,_command)
+}
+
+//******************************************************************************
+// initializing global variable
+//******************************************************************************
+GOYA.OnSystemLoad.GOYA.CORE
+{
+	// ベースウェア通信用変数
+	var.req.key   = (IARRAY, 'Path')
+	var.req.value = (IARRAY, _argv[0])
+	sender        = ''
+	status        = ''
+	reference     = IARRAY
+	res_reference = IARRAY
+	marker        = ''
+	S_CHARSET     = GETSETTING('charset.output')
+
+	// 時系列変数
+	ghostboottime = systemuptime()
+
+	// ランダムトーク用変数
+	GOYA.AiTalkCount = 0
+
+	// SAORI用変数
+	SAORI.DllList  = IARRAY
+	valueex        = IARRAY
+	LIB.PROTOCOL   = ''
+	LIB.STATUSCODE = ''
+	var.lib.key    = IARRAY
+	var.lib.value  = IARRAY
+	var.lib.result = ''
+}
+GOYA.OnSystemUnload.GOYA.CORE
+{
+	// ベースウェア通信用変数
+	ERASEVAR('var.req.key')
+	ERASEVAR('var.req.value')
+	ERASEVAR('sender')
+	ERASEVAR('status')
+	ERASEVAR('reference')
+	ERASEVAR('res_reference')
+	ERASEVAR('marker')
+	ERASEVAR('S_CHARSET')
+
+	// 時系列変数
+	ERASEVAR('ghostboottime')
+
+	// ランダムトーク用変数
+	ERASEVAR('GOYA.AiTalkCount')
+
+	// SAORI用変数
+	ERASEVAR('SAORI.DllList')
+	ERASEVAR('valueex')
+	ERASEVAR('LIB.PROTOCOL'  )
+	ERASEVAR('LIB.STATUSCODE')
+	ERASEVAR('var.lib.key'   )
+	ERASEVAR('var.lib.value' )
+	ERASEVAR('var.lib.result')
+}
+
+//******************************************************************************
+// system functions
+//******************************************************************************
+//------------------------------------------------------------------------------
+//関数名：GOYA.OnRequest
+//機能　：受け取ったリクエストに応じた処理を行います
+//引数　：_argv[0] EventID
+//　　　：_argv[1] RequestCommand
+//------------------------------------------------------------------------------
+GOYA.OnRequest
+{
+	_id      = _argv[0]
+	_command = _argv[1]
+	_result  = ''
+	// コマンド別に処理分岐
+	case _command {
+	when 'NOTIFY' {
+		// NOTIFYリクエスト
+		_result = GOYA.RaiseIDEvent(_id,'notify')
+		"SHIORI/3.0 200 OK%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF2)"
+	}
+	when 'GET' {
+		// GETリクエスト
+		if SUBSTR(_id, 0, 2) == 'On' {
+			_result = GOYA.RaiseIDEvent(_id,'event')
+		} else {
+			_result = GOYA.RaiseIDEvent(_id,'resource')
+		}
+		if _result == '' {
+			GOYA.MakeEmptyResponse(_id)
+		} else {
+			"SHIORI/3.0 200 OK%(C_CRLF)Sender: AYA%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF)/
+				Value: %(_result)%(C_CRLF)"
+			--
+			GOYA.AssembleReferenceHeader
+			--
+			C_CRLF
+		}
+	}
+	others
+		// 未知のリクエスト
+		"SHIORI/3.0 400 Bad Request%(C_CRLF2)"
+	}
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.MakeEventHandler
+//機能　：EventIDの前に'event.'/'resource.'/'notify.'をつけたものを返す
+//引数　：_argv[0] EventID
+//　　　：_argv[1] RequestCommand
+//------------------------------------------------------------------------------
+GOYA.MakeEventHandler
+{
+	_id      = _argv[0]
+	_command = _argv[1]
+	_ret     = ''
+	if _command == 'NOTIFY' {
+		_ret = 'notify.' + _id
+	} elseif _command == 'GET' {
+		if SUBSTR(_id, 0, 2) == 'On' {
+			_ret = 'event.' + _id
+		} else {
+			_ret = 'resource.' + _id
+		}
+	}
+	_ret
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.IsImportantEvent
+//機能　：絶対に通知すべきイベントを識別します
+//引数　：_argv[0] EventID
+//------------------------------------------------------------------------------
+GOYA.IsImportantEvent
+{
+	case _argv[0] {
+	when 'OnSecondChange','OnUpdateReady','OnUpdateComplete'
+		1
+	}
+	0
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.MakeEmptyResponse
+//機能　："204を返してはいけないリクエスト"を判定して、
+//        適正な応答文字列を作成します
+//引数　：_argv[0] EventID
+//------------------------------------------------------------------------------
+GOYA.MakeEmptyResponse
+{
+	case _argv[0] {
+	when 'OnFirstBoot', 'OnBoot', 'OnWindowStateRestore', 'OnGhostChanged', 'OnShellChanged'
+		// スコープ0/1の基本サーフィスを出す必要があるイベント
+		"SHIORI/3.0 200 OK%(C_CRLF)Sender: AYA%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF)/
+			Value: \0\s[0]\1\s[10]\e%(C_CRLF2)"
+	when 'OnClose'
+		// 終了指示を出す必要があるイベント
+		"SHIORI/3.0 200 OK%(C_CRLF)Sender: AYA%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF)/
+			Value: \0\-\e%(C_CRLF2)"
+	others
+		// 上記以外では204を返送して良い
+		"SHIORI/3.0 204 No Content%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF2)"
+	}
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.RaiseIDEvent
+//機能　：指定された名前の関数を実行して結果を取得します
+//引数　：_argv[0] EventID
+//　　　：_argv[1] ヘッダ
+//------------------------------------------------------------------------------
+GOYA.RaiseIDEvent
+{
+	_id    = _argv[0]
+	_event = _argv[1] + '.' + _argv[0]
+
+	// reference 変数を作成
+	reference = IARRAY
+	_sz       = ARRAYSIZE(var.req.key)
+	for _i = 0; _i < _sz; _i++ {
+		if SUBSTR(_keyname = var.req.key[_i], 0, 9) == 'Reference' {
+			_refnum = TOINT(SUBSTR(_keyname, 9, 3))
+			_value  = var.req.value[_i]
+			reference[_refnum] = _value
+		}
+	}
+	// res_reference 配列を初期化
+	res_reference = IARRAY
+
+	case _id {
+		when 'OnSecondChange' {
+			// OnSecondChangeならランダムトーク関連処理
+			GOYA.ControlAiTalk(&_event)
+		}
+		when 'OnUpdateReady' {
+			// OnUpdateReadyならロード中のSAORIをすべてunloadする
+			GOYA.SaoriUnloadAll()
+		}
+		when 'OnUpdateComplete' {
+			// OnUpdateCompleteならdl2を探す。存在したら同名のdllを削除、dl2はdllにリネームする
+			// もっともAYA自身が対象だった場合はどうしようもないが。
+			GOYA.Dl2ToDll()
+		}
+	}
+
+	// イベント活性化
+	_result = ''
+	if ISFUNC(_event) {
+		EVAL(_event)
+	}
+
+	// reference 変数をクリア
+	ERASEVAR('reference')
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.AssembleReferenceHeader
+//機能　：汎用配列'res_reference'から返送用のReference文字列を作成します
+//　　　　変数'marker'から返送用のMarker文字列を作成します
+//------------------------------------------------------------------------------
+GOYA.AssembleReferenceHeader
+{
+	_result = ''
+	if ISVAR('res_reference') {
+		for _i = 0; _i < ARRAYSIZE(res_reference); _i++ {
+			_result += "Reference%(_i): %(res_reference[_i])%(C_CRLF)"
+		}
+		ERASEVAR('res_reference')
+	}
+	if ISVAR('marker') {
+		_result += "Marker: %(marker)%(C_CRLF)"
+		ERASEVAR('marker')
+	}
+	_result
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.ControlAiTalk
+//機能　：AIトーク発動処理
+//引数　：_argv[0] イベント名
+//------------------------------------------------------------------------------
+GOYA.ControlAiTalk
+{
+	if TOINT(reference[3]) { //喋れる
+		if aitalkinterval > 0 {		// トーク間隔が非0
+			GOYA.AiTalkCount++
+
+			if GOYA.AiTalkCount > aitalkinterval {	// トーク間隔の設定時間を越えた
+				GOYA.AiTalkCount = 0
+				_argv[0] = 'event.OnAiTalk'
+			}
+		}
+	}
+}
+
+//******************************************************************************
+//ネットワーク更新後にできた dl2 ファイルに関する処置
+//******************************************************************************
+//------------------------------------------------------------------------------
+//関数名：GOYA.Dl2ToDll
+//機能　：処理の開始
+//------------------------------------------------------------------------------
+GOYA.Dl2ToDll
+{
+	GOYA.ExecuteDl2ToDll('')
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.ExecuteDl2ToDll
+//機能　：指定したディレクトリに存在するdl2を処理
+//引数　：_argv[0] 処理対象パス（AYA dllからの相対パス指定）
+//------------------------------------------------------------------------------
+GOYA.ExecuteDl2ToDll
+{
+	// 指定ディレクトリ内のファイルを列挙
+	_files   = TOLOWER(FENUM(_argv[0]))
+	// 拡張子dl2のファイルをリストに蓄積する　子ディレクトリ内も再帰的に処理する
+	_targets = IARRAY
+	foreach _files; _file {
+		if SUBSTR(_file, 0, 1) == '\'
+			GOYA.ExecuteDl2ToDll(_argv[0] + _file)
+		else {
+			_s_path = SPLITPATH(_file)
+			if _s_path[3] == '.dl2'
+				_targets ,= _s_path[2]
+		}
+	}
+
+	// 拡張子dl2をdllへ名前変更する　旧dllは消去する
+	foreach _targets; _target {
+		_path = _argv[0] + '\' + _target
+		_dmy = FDEL(_path + '.dll')
+		_dmy = FRENAME(_path + '.dl2', _path + '.dll')
+	}
+}
+
+//******************************************************************************
+//文 version 3 システム関数 / システム変数の補完
+//FUNCTIONEX / SAORI
+//******************************************************************************
+//------------------------------------------------------------------------------
+//関数名：FUNCTIONLOAD
+//機能　：SAORIを読み込みます
+//引数　：_argv[0]　 対象DLL名
+//------------------------------------------------------------------------------
+FUNCTIONLOAD
+{
+	// load　エラーなら抜ける　初回のloadならGET Versionを送出する
+	_r_load = LOADLIB(_argv[0])
+	if !_r_load {
+		0
+		return
+	}
+	if _r_load == 1 {
+		if SUBSTR(GOYA.SendGETVersion(_argv[0]), 0, 1) != '2' {
+			UNLOADLIB(_argv[0])
+			0
+			return
+		}
+		SAORI.DllList ,= _argv[0]
+	}
+	1
+}
+
+//------------------------------------------------------------------------------
+//関数名：FUNCTIONEX
+//機能　：SAORIを実行します
+//引数　：_argv[0]　 対象DLL名
+//　　　　_argv[1]～ Argument0～
+//------------------------------------------------------------------------------
+FUNCTIONEX
+{
+	if FUNCTIONLOAD(_argv[0]) == 0 {
+		0
+		return
+	}
+
+	// リクエスト文字列を作成
+	_reqheader = /
+		"EXECUTE SAORI/1.0%(C_CRLF)/
+		Charset: %(CHARSETLIBEX(_argv[0]))%(C_CRLF)/
+		Sender: AYA%(C_CRLF)/
+		SecurityLevel: Local%(C_CRLF)"
+	for _i = 1; _i < _argc; _i++ {
+		_reqheader += "Argument%(_i - 1): %(_argv[_i])%(C_CRLF)"
+	}
+	_reqheader += C_CRLF
+
+	// 実行
+	GOYA.RequestLib(_argv[0], _reqheader)
+
+	if var.lib.result != ''
+		var.lib.result
+	GOYA.MakeValueexVariable
+}
+
+//------------------------------------------------------------------------------
+//関数名：SAORI
+//機能　：SAORIを実行します
+//        FUNCTIONEXのシノニム。一段下駄が入る分FUNCTIONEXより低速になりますが、
+//        気にするほどではありません。
+//------------------------------------------------------------------------------
+SAORI { FUNCTIONEX(_argv) }
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.SendGETVersion
+//機能　：SAORIへGET Versionを送出します
+//引数　：_argv[0] SAORIファイル名
+//------------------------------------------------------------------------------
+GOYA.SendGETVersion
+{
+	GOYA.RequestLib(_argv[0], "GET Version SAORI/1.0%(C_CRLF)Charset: %(CHARSETLIBEX(_argv[0]))%(C_CRLF)Sender: AYA%(C_CRLF2)")
+	LIB.STATUSCODE
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.RequestLib
+//機能　：SAORIへリクエストを送出し、結果を得ます
+//引数　：_argv[0] SAORIファイル名
+//　　　　_argv[1] リクエスト文字列
+//------------------------------------------------------------------------------
+GOYA.RequestLib
+{
+	LIB.PROTOCOL   = ''
+	LIB.STATUSCODE = ''
+	var.lib.key    = IARRAY
+	var.lib.value  = IARRAY
+
+	// リクエスト送出
+	_result = REQUESTLIB(_argv[0], _argv[1])
+
+	// 結果の解析
+
+	// 改行で分割
+	_lines = RE_SPLIT(_result, C_CRLF)
+
+	// プロトコル名と結果の取得
+	_seppos = STRSTR(_lines[0], ' ', 0)
+	if _seppos == -1; return
+	LIB.PROTOCOL   = SUBSTR(_lines[0], 0, _seppos)
+	LIB.STATUSCODE = SUBSTR(_lines[0], _seppos + 1, STRLEN(_lines[0]) - _seppos - 1)
+
+	// レスポンスヘッダの取得
+	var.lib.key   = IARRAY
+	var.lib.value = IARRAY
+	var.lib.result = ''
+	_skip = 1
+	foreach _lines; _lin {
+		// 1行目は飛ばす
+		if _skip {
+			_skip = 0
+			continue
+		}
+		// キーと値を取得
+		_len         = STRLEN(_lin)
+		_pos         = STRSTR(_lin, ': ', 0)
+		var.lib.key ,= (_key = SUBSTR(_lin, 0, _pos))
+		_value       = SUBSTR(_lin, _pos + 2, _len - _pos - 2)
+		if TOSTR(TOAUTO(_value)) == _value {
+				_valuecv = TOAUTO(_value)
+		}
+		else {
+				_valuecv = _value
+		}
+		
+		var.lib.value ,= _valuecv
+		if _key == 'Result' {
+			var.lib.result = _valuecv
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.MakeValueexVariable
+//機能　：リクエストヘッダからvalueex配列を作成します
+//------------------------------------------------------------------------------
+GOYA.MakeValueexVariable
+{
+	valueex = IARRAY
+	for _i = 0; _i < ARRAYSIZE(var.lib.key); _i++ {
+		if SUBSTR(_keyname = var.lib.key[_i], 0, 5) == 'Value' {
+			valueex[TOINT(SUBSTR(_keyname, 5, 3))] = var.lib.value[_i]
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.SaoriUnloadAll
+//機能　：ロードされているSAORIをすべてunloadします
+//------------------------------------------------------------------------------
+GOYA.SaoriUnloadAll
+{
+	foreach SAORI.DllList; _saori { UNLOADLIB(_saori) }
+	SAORI.DllList = IARRAY
+}
+
+//******************************************************************************
+//時刻系変数
+//******************************************************************************
+year    { GETTIME[0] }
+month   { GETTIME[1] }
+day     { GETTIME[2] }
+weekday { GETTIME[3] }
+hour    { GETTIME[4] }
+minute  { GETTIME[5] }
+second  { GETTIME[6] }
+
+systemuptime
+{
+	_highcount = GETTICKCOUNT(1)
+	if _highcount > 1
+		GETTICKCOUNT/1000
+	else
+		(_highcount*0x40000000 + (GETTICKCOUNT/2))/500
+}
+ghostuptime
+{
+	systemuptime() - ghostboottime
+}

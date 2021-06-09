@@ -1,0 +1,4 @@
+charset,Shift_JIS
+type,ghost
+name,-ƒŠƒ“ƒŠƒ“
+directory,jong-rinrin

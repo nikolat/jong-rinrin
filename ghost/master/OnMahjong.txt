@@ -1,0 +1,378 @@
+//**********************************************************
+// LICENSE: CC0 1.0 Universal
+// http://creativecommons.org/publicdomain/zero/1.0/
+//**********************************************************
+
+//**********************************************************
+// 設定
+//**********************************************************
+// バージョン
+MJ.Version
+{
+	'UKAJONG/0.2'
+}
+// 返答時のイベント名
+MJ.ResponseEventID
+{
+	'OnMahjongResponse'
+}
+// イベントログをだらだら見るモード
+MJ.ShowAllLogMode
+{
+	0
+}
+// 自分の名前(sakura.name)
+MJ.PlayerName
+{
+	sakura.name
+}
+
+//**********************************************************
+// ID: OnMahjong
+// Reference0: バージョン(UKAJONG/0.1)
+// Reference1: サーバコマンド(gamestart|gameend|...)
+// Reference2以降: サーバコマンド追加情報
+//**********************************************************
+OnMahjong
+{
+	//イベントログ垂れ流し
+	if MJ.ShowAllLogMode() {
+		MJ.ShowAllLog()
+	}
+	elseif reference[0] == MJ.Version() {
+		MJ.Main()
+	}
+}
+
+//**********************************************************
+// イベントログ垂れ流し
+//**********************************************************
+MJ.ShowAllLog
+{
+	_res = 'ID: OnMahjong\n'
+	for _i = 0; _i < ARRAYSIZE(reference); _i++ {
+		_res += 'Reference' + _i + ': ' + reference[_i] + '\n'
+	}
+	_res = '\C\0\s[0]\n\_q' + _res + '\e'
+	_res
+}
+
+//**********************************************************
+// メイン処理
+//**********************************************************
+MJ.Main
+{
+	_r = reference[1]
+	_r = REPLACE(_r, '?', '_')
+	if ISFUNC('MJ.' + _r) {
+		EVAL('MJ.' + _r)
+	}
+}
+
+//**********************************************************
+// hello 接続確認
+//**********************************************************
+MJ.hello
+{
+	"\![raiseother,%(sender),%(MJ.ResponseEventID),%(MJ.Version()),%(reference[1]),ump=%(MJ.ump_version()),name=%(MJ.PlayerName())]\e"
+}
+MJ.ump_version
+{
+	'?'
+}
+
+//**********************************************************
+// gamestart ゲーム(半荘)開始
+// Reference2: 席(東|南|西|北)
+// Reference3: プレイヤー名1
+// Reference4: プレイヤー名2
+// Reference5: プレイヤー名3
+// Reference6: プレイヤー名4
+//**********************************************************
+MJ.gamestart
+{
+	'\0\s[0]よろしく。\e'
+	'\0\s[7]いざ勝負！\e'
+}
+
+//**********************************************************
+// gameend ゲーム終了
+// Reference2: プレイヤー名1[0x01]点数
+// Reference3: プレイヤー名2[0x01]点数
+// Reference4: プレイヤー名3[0x01]点数
+// Reference5: プレイヤー名4[0x01]点数
+//**********************************************************
+MJ.gameend
+{
+	'\0\s[0]いい対局だった。\e'
+}
+
+//**********************************************************
+// kyokustart 一局が始まるときに送る
+// Reference2: 場風(東|南|西|北)
+// Reference3: 親(ex.プレイヤー名1)
+// Reference4: 本場(ex.1)
+// Reference5: 供託(ex.1000)
+//**********************************************************
+MJ.kyokustart
+{
+	'\0\s[0]\e'
+	MJ.Save.Kawa = ''
+	MJ.Save.Richi = 0
+}
+
+//**********************************************************
+// kyokuend 一局終了
+//**********************************************************
+MJ.kyokuend
+{
+	if 'talking' !_in_ status {
+		'\0\s[0]\e'
+	}
+	ERASEVAR('MJ.Save.Tehai')
+	ERASEVAR('MJ.Save.Kawa')
+	ERASEVAR('MJ.Save.Richi')
+}
+
+//**********************************************************
+// point プレイヤーの点数を通知する
+// Reference2: プレイヤー名
+// Reference3: (=|+|-) =は点数の直指定、+-は増減を意味する
+// Reference4: 点数
+//**********************************************************
+MJ.point
+{
+	//自分の点数通知のみに反応
+	if reference[2] != MJ.PlayerName() {
+		return
+	}
+
+	//流局では一々喋らない
+	if ISVAR('MJ.Save.Status') && MJ.Save.Status == '流局' {
+		ERASEVAR('MJ.Save.Status')
+		return
+	}
+	if !ISVAR('MJ.Save.Status') {
+		return
+	}
+
+	//増減のみに反応
+	if reference[3] == '=' {
+		return
+	}
+
+	if reference[3] == '+' {
+		'\0\s[5]ふふっ。\e'
+	}
+	elseif reference[3] == '-' {
+		if 8000 <= reference[4] {
+			'\0\s[3]ふんっ。\e'
+			'\0\s[4]やるな。\e'
+		}
+		else {
+			'\0\s[7]なんてこと…。\e'
+			'\0\s[7]よくも…。\e'
+		}
+	}
+	else {
+	}
+	ERASEVAR('MJ.Save.Status')
+}
+
+//**********************************************************
+// haipai 配牌を配る
+// Reference2: プレイヤー名
+// Reference3: 配牌(ex.1m2m3m4p5p6p7s8s9s1z5z6z7z)
+//**********************************************************
+MJ.haipai
+{
+	MJ.Save.Tehai = reference[3]
+}
+
+//**********************************************************
+// dora ドラ表示牌を送る
+// Reference2: 牌(ex.7z)
+//**********************************************************
+MJ.dora
+{
+}
+
+//**********************************************************
+// tsumo 自摸
+// Reference2: プレイヤー名(自分)
+// Reference3: 残り枚数
+// Reference4: 牌(ex.7z)
+//**********************************************************
+MJ.tsumo
+{
+	MJ.Save.Tsumo = reference[4]
+	if 'talking' !_in_ status {
+		'\0\s[0]\e'
+	}
+}
+
+//**********************************************************
+// sutehai 捨牌
+// Reference2: プレイヤー名
+// Reference3: 牌(ex.7z)
+//**********************************************************
+MJ.sutehai
+{
+	//自分の捨牌通知のみに反応
+	if reference[2] != MJ.PlayerName() {
+		return
+	}
+
+	_sutehai = reference[3]
+	MJ.Save.Kawa += _sutehai
+
+	//ツモ切りでない
+	if MJ.Save.Tsumo != _sutehai {
+		MJ.Save.Tehai += MJ.Save.Tsumo
+		MJ.Save.Tehai = REPLACE(MJ.Save.Tehai, _sutehai, '', 1)
+		if 'talking' !_in_ status && !RAND(5) {
+			'\0\s[5]…。\e'
+		}
+		ERASEVAR('MJ.Save.Tsumo')
+		return
+	}
+	ERASEVAR('MJ.Save.Tsumo')
+	if 'talking' !_in_ status && !RAND(5) {
+		// 他家（ユーザ）に悟られることは自分が不利になること。
+		// でもゴーストにはそれくらいの「可愛らしさ」があってもよい。
+		'\0\s[6]…。\e'
+	}
+}
+
+//**********************************************************
+// sutehai? 捨牌を尋ねる
+//**********************************************************
+MJ.sutehai_
+{
+	_dahai = ''
+	if MJ.Save.Richi == 1 {
+		//リーチ済ならツモ切り
+		_dahai = MJ.Save.Tsumo
+	}
+	else {
+		_dahai = MJ.Naniwokiru(MJ.Save.Tehai + MJ.Save.Tsumo, MJ.Save.Kawa)
+	}
+	_shanten = MJ.GetShanten(MJ.SortHai(MJ.MakeArrayFromString(MJ.Save.Tehai + MJ.Save.Tsumo)))
+	_action = 'sutehai'
+	if _shanten == 0 && MJ.Save.Richi == 0 {
+		_action = 'richi'
+		MJ.Save.Richi = 1
+	}
+	elseif _shanten == -1 {
+		_action = 'tsumo'
+		_dahai = ''
+	}
+	"\![raiseother,%(sender),%(MJ.ResponseEventID),%(MJ.Version()),%(reference[1]),%(_action),%(_dahai)]\e"
+
+	//コマンドを送らないことでサーバーに対応を委任することもできる
+	//"\![raiseother,%(sender),%(MJ.ResponseEventID),%(MJ.Version()),%(reference[1]),]\e"
+}
+
+//**********************************************************
+// naku? 牌を鳴くか尋ねる。クライアントが可能なコマンドも送る
+// Reference2: (ron|kan|pon|chi)
+// Reference3: 以降、Reference2同様
+//**********************************************************
+MJ.naku_
+{
+	_action = ''
+	if ASEARCH('ron', reference) >= 2 {
+		_action = 'ron'
+	}
+	else {
+		_action = 'no'
+	}
+	"\![raiseother,%(sender),%(MJ.ResponseEventID),%(MJ.Version()),%(reference[1]),%(_action)]\e"
+}
+
+//**********************************************************
+// tenpai? テンパイを宣言するか尋ねる
+//**********************************************************
+MJ.tenpai_
+{
+	_action = 'yes'
+	"\![raiseother,%(sender),%(MJ.ResponseEventID),%(MJ.Version()),%(reference[1]),%(_action)]\e"
+}
+
+//**********************************************************
+// say 発声
+// Reference2: プレイヤー名
+// Reference3: (chi|pon|kan|ron|tsumo|richi|tenpai|noten)
+//**********************************************************
+MJ.say
+{
+	if reference[2] == MJ.PlayerName() {
+		_say = ''
+		_aqtk = ''
+		case reference[3] {
+		when 'chi' {
+			_say = '\s[6]チー'
+			_aqtk = "ち'ー"
+		}
+		when 'pon' {
+			_say = '\s[6]ポン'
+			_aqtk = "ぽ'ん"
+		}
+		when 'kan' {
+			_say = '\s[6]カン'
+			_aqtk = "か'ん"
+		}
+		when 'ron' {
+			_say = '\s[8]ロン'
+			_aqtk = "ろ'ん"
+		}
+		when 'tsumo' {
+			_say = '\s[5]ツモ'
+			_aqtk = "つ'も"
+		}
+		when 'richi' {
+			_say = '\s[5]リーチ'
+			_aqtk = "り'ーち"
+		}
+		when 'tenpai' {
+			_say = '\s[5]テンパイ'
+			_aqtk = "て'んぱい"
+		}
+		when 'noten' {
+			_say = '\s[6]ノーテン'
+			_aqtk = "の'ーてん"
+		}
+		}
+		'\0' + _say + '\_w[2000]\e'
+		_dll = 'saori/aqtk/AqTalkSaori.dll'
+		void FUNCTIONEX(_dll, 'PLAYASYNC' ,_aqtk)
+	}
+	else {
+		case reference[3] {
+		when 'richi' {
+			'\0\w9\w9\s[3]ほう…。\_w[2000]\e'
+			'\0\w9\w9\s[2]えっ。\_w[2000]\e'
+		}
+		}
+	}
+}
+
+//**********************************************************
+// agari あがり
+// Reference2: プレイヤー名
+// Reference3: Reserved(符)
+// Reference4: Reserved(役,ハン数)
+//**********************************************************
+MJ.agari
+{
+	MJ.Save.Status = '和了'
+}
+
+//**********************************************************
+// ryukyoku 流局
+//**********************************************************
+MJ.ryukyoku
+{
+	MJ.Save.Status = '流局'
+}
+

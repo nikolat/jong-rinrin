@@ -1,0 +1,105 @@
+//******************************************************************************
+// required event
+//******************************************************************************
+event.OnFirstBoot          { '\1\s[10]\0\s[0]よろしく。\e' }
+event.OnBoot               { '\1\s[10]\0\s[0]呼んだか？\e' }
+event.OnGhostChanged       { '\1\s[10]\0\s[0]呼んだか？\e' }
+event.OnShellChanged       { '\1\s[10]\0\s[0]待たせたな。\e' }
+event.OnWindowStateRestore { '\1\s[10]\0\s[0]\e' }
+event.OnClose              { '\1\s[10]\0\s[0]またな。\_w[500]\-\e' }
+
+//******************************************************************************
+// update event
+//******************************************************************************
+event.OnUpdateBegin        { '\0\s[0]\_qUpdate Begin.\_q\e' }
+event.OnUpdateComplete     { '\0\s[0]\_q' + reference[0] + '.\_q\e' }
+event.OnUpdateFailure      { '\0\s[0]\_q' + reference[0] + '.\_q\e' }
+event.OnUpdateReady
+{
+	_n = 0
+	if sender == 'embryo' {
+		_n = reference[0] + 1
+	} else {
+		_n = reference[0]
+	}
+	if _n > 1 {
+		'\0\s[0]\_q' + _n + ' files exist.\_q\e'
+	} elseif _n == 1 {
+		'\0\s[0]\_q' + _n + ' file exists.\_q\e'
+	}
+}
+
+//******************************************************************************
+// mouse event
+//******************************************************************************
+event.OnMouseMove
+{
+	AYATEMPLATE.MouseMoveWheelFunc(0, 50, 'MouseMove')
+}
+
+event.OnMouseDoubleClick
+{
+	AYATEMPLATE.MouseEventExec('MouseDoubleClick');
+}
+
+MouseDoubleClick0Head : nonoverlap
+{
+	'\0\s[3]何をする。\e'
+	'\0\s[4]壊れるから止めろ。\e'
+}
+MouseDoubleClick0Face : nonoverlap
+{
+	'\0\s[3]何だ？\e'
+	'\0\s[6]触るな。\_w[500]ツキが逃げる。\e'
+}
+MouseDoubleClick0Bust : nonoverlap
+{
+	'\0\s[2]っ！\_w[500]\s[1]よ、よせ…。\e'
+	'\0\s[1]もっと丁重に扱え。\e'
+}
+MouseDoubleClick0 : nonoverlap
+{
+	'\0\s[0]何か用か？\e'
+	'\0\s[3]4翻30符がどうして満貫なのだ…？\e'
+	'\0\s[6]お前の大切なものを賭けて闘え。\e'
+	'\0\s[5]お前なら何を切る？\e'
+}
+MouseMove0Head : nonoverlap
+{
+	'\0\s[1]こ、子供扱いするな。\e'
+	'\0\s[5]…？\e'
+}
+MouseMove0Face : nonoverlap
+{
+	'\0\s[0]…？\e'
+	'\0\s[6]邪魔するな。\e'
+}
+MouseMove0Bust : nonoverlap
+{
+	'\0\s[7]そこは１筒じゃない！\e'
+	'\0\s[1]盲牌の練習でもしてろ。\e'
+}
+
+//******************************************************************************
+// key event
+//******************************************************************************
+event.OnKeyPress
+{
+	if reference[0] == 'r' {
+		'\![reload,shiori]\0\s[0]\_qReloaded.\e'
+	}
+}
+//******************************************************************************
+// other
+//******************************************************************************
+event.OnSurfaceRestore
+{
+	'\1\s[10]\0\s[0]\e'
+}
+//******************************************************************************
+// OnMahjong event
+//******************************************************************************
+event.OnMahjong
+{
+	OnMahjong()
+}

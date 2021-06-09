@@ -1,0 +1,34 @@
+//******************************************************************************
+// initializing global variable
+//******************************************************************************
+GOYA.OnSystemLoad.NOTIFY.EVENT
+{
+	sakura.name  = ''
+	ghostexlist  = IARRAY
+	ghostexcount = 0
+}
+GOYA.OnSystemUnload.NOTIFY.EVENT
+{
+	ERASEVAR('sakura.name')
+	ERASEVAR('ghostexlist')
+	ERASEVAR('ghostexcount')
+}
+
+//******************************************************************************
+// self info
+//******************************************************************************
+notify.OnNotifySelfInfo
+{
+	sakura.name = reference[1]
+}
+
+//******************************************************************************
+// other ghost booting info
+//******************************************************************************
+notify.otherghostname
+{
+	ghostexlist  = IARRAY
+	foreach reference; _ref { ghostexlist ,= _ref[0,CHR(0x1)] }
+	if sender == 'crow' { ghostexlist[ASEARCH(sakura.name,ghostexlist)] = IARRAY }
+	ghostexcount = ARRAYSIZE(ghostexlist)
+}
