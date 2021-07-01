@@ -8,11 +8,12 @@ ver. date     note
 1.1  20070428 config分離、READFMOを使ったルーチン追加
 1.2  20080323 構造変更（shiori3,config,compatible,optional)
 1.2c 20081015 自己流カスタマイズ by Don
+1.3  20210701 辞書読み込みエラーが起きた時の緊急フォールバック機能対応
 */
 //******************************************************************************
 
-#define			C_CRLF2		C_CRLF+C_CRLF		/* 改行コードx2   */
-#define			C_CRLF		CHR(0xd)+CHR(0xa)	/* 改行コード     */
+#define	C_CRLF2		C_CRLF+C_CRLF		/* 改行コードx2   */
+#define	C_CRLF		CHR(0xd)+CHR(0xa)	/* 改行コード     */
 
 load   { foreach GETFUNCLIST('GOYA.OnSystemLoad')  ; _load   { EVAL(_load)   } }
 unload { foreach GETFUNCLIST('GOYA.OnSystemUnload'); _unload { EVAL(_unload) } }
@@ -87,13 +88,19 @@ request
 			status = _value
 		}
 		// キーと値を記憶
-		if TOSTR(TOAUTO(_value)) == _value {
-			var.req.value ,= TOAUTO(_value)
-		} else {
-			var.req.value ,= _value
-		}
+		var.req.value ,= TOAUTOEX(_value)
 	}
 	GOYA.OnRequest(_id,_command)
+}
+
+TOAUTOEX
+{
+	_v = _argv[0]
+	if TOSTR(TOAUTO(_v)) == _v {
+		TOAUTO(_v)
+		return
+	}
+	_v
 }
 
 //******************************************************************************
@@ -110,6 +117,10 @@ GOYA.OnSystemLoad.GOYA.CORE
 	res_reference = IARRAY
 	marker        = ''
 	S_CHARSET     = GETSETTING('charset.output')
+	GOYA.ErrorDescription = ''
+	GOYA.ErrorLevel = ''
+	GOYA.LastErrorDescription = ''
+	GOYA.InitAdditionalReturn()
 
 	// 時系列変数
 	ghostboottime = systemuptime()
@@ -137,6 +148,10 @@ GOYA.OnSystemUnload.GOYA.CORE
 	ERASEVAR('res_reference')
 	ERASEVAR('marker')
 	ERASEVAR('S_CHARSET')
+	ERASEVAR('GOYA.ErrorDescription')
+	ERASEVAR('GOYA.ErrorLevel')
+	ERASEVAR('GOYA.LastErrorDescription')
+	GOYA.ClearAdditionalReturnVariable()
 
 	// 時系列変数
 	ERASEVAR('ghostboottime')
@@ -172,15 +187,15 @@ GOYA.OnRequest
 	case _command {
 	when 'NOTIFY' {
 		// NOTIFYリクエスト
-		_result = GOYA.RaiseIDEvent(_id,'notify')
-		"SHIORI/3.0 200 OK%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF2)"
+		_result = GOYA.RaiseIDEvent('notify.' + _id)
+		"SHIORI/3.0 200 OK%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF)"
 	}
 	when 'GET' {
 		// GETリクエスト
 		if SUBSTR(_id, 0, 2) == 'On' {
-			_result = GOYA.RaiseIDEvent(_id,'event')
+			_result = GOYA.RaiseIDEvent('event.' + _id)
 		} else {
-			_result = GOYA.RaiseIDEvent(_id,'resource')
+			_result = GOYA.RaiseIDEvent('resource.' + _id)
 		}
 		if _result == '' {
 			GOYA.MakeEmptyResponse(_id)
@@ -188,15 +203,26 @@ GOYA.OnRequest
 			"SHIORI/3.0 200 OK%(C_CRLF)Sender: AYA%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF)/
 				Value: %(_result)%(C_CRLF)"
 			--
-			GOYA.AssembleReferenceHeader
-			--
-			C_CRLF
+			GOYA.AssembleReferenceHeader()
+
+			GOYA.GetLastErrorLog()
+			
+			if GOYA.LastErrorDescription != GOYA.ErrorDescription {
+				GOYA.LastErrorDescription = GOYA.ErrorDescription
+				
+				GOYA.PushAdditionalReturn('ErrorLevel',GOYA.ErrorLevel)
+				GOYA.PushAdditionalReturn('ErrorDescription',GOYA.ErrorDescription)
+			}
 		}
 	}
 	others
 		// 未知のリクエスト
-		"SHIORI/3.0 400 Bad Request%(C_CRLF2)"
+		"SHIORI/3.0 400 Bad Request%(C_CRLF)"
 	}
+	--
+	GOYA.GetAdditionalReturns()
+	--
+	C_CRLF
 }
 
 //------------------------------------------------------------------------------
@@ -262,27 +288,25 @@ GOYA.MakeEmptyResponse
 //------------------------------------------------------------------------------
 //関数名：GOYA.RaiseIDEvent
 //機能　：指定された名前の関数を実行して結果を取得します
-//引数　：_argv[0] EventID
-//　　　：_argv[1] ヘッダ
+//引数　：_argv[0] ヘッダ + EventID
 //------------------------------------------------------------------------------
 GOYA.RaiseIDEvent
 {
-	_id    = _argv[0]
-	_event = _argv[1] + '.' + _argv[0]
-
 	// reference 変数を作成
 	reference = IARRAY
-	_sz       = ARRAYSIZE(var.req.key)
+	_sz = ARRAYSIZE(var.req.key)
 	for _i = 0; _i < _sz; _i++ {
 		if SUBSTR(_keyname = var.req.key[_i], 0, 9) == 'Reference' {
 			_refnum = TOINT(SUBSTR(_keyname, 9, 3))
-			_value  = var.req.value[_i]
+			_value = var.req.value[_i]
 			reference[_refnum] = _value
 		}
 	}
 	// res_reference 配列を初期化
 	res_reference = IARRAY
 
+	_event = _argv[0]
+	
 	case _id {
 		when 'OnSecondChange' {
 			// OnSecondChangeならランダムトーク関連処理
@@ -300,13 +324,108 @@ GOYA.RaiseIDEvent
 	}
 
 	// イベント活性化
-	_result = ''
 	if ISFUNC(_event) {
 		EVAL(_event)
 	}
 
 	// reference 変数をクリア
 	ERASEVAR('reference')
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.GetLastErrorLog
+//機能　：エラーログに表示すべき文字列を作成します
+//------------------------------------------------------------------------------
+GOYA.GetLastErrorLog
+{
+	_errors = GETERRORLOG()
+	
+	_errorlevel_text = 'GOYA.ERRORLOGLEVEL'
+	_errorlevel = 2
+	
+	if _errorlevel_text == 'note' {
+		_errorlevel = 0
+	}
+	elseif _errorlevel_text == 'warning' {
+		_errorlevel = 1
+	}
+	
+	GOYA.ErrorDescription = ''
+	GOYA.ErrorLevel = ''
+	
+	foreach _errors; _error {
+		_el = 0
+		
+		if ( STRSTR(_error,'error',0) >= 0 ) {
+			_el = 2
+		}
+		elseif ( STRSTR(_error,'warning',0) >= 0 ) {
+			_el = 1
+		}
+		
+		if _el < _errorlevel {
+			continue
+		}
+		
+		if STRLEN(GOYA.ErrorDescription) > 0 {
+			GOYA.ErrorDescription += CHR(1)
+			GOYA.ErrorLevel += CHR(1)
+		}
+		
+		GOYA.ErrorDescription += _error
+		
+		if _el == 0 {
+			GOYA.ErrorLevel += 'info'
+		}
+		elseif _el == 1 {
+			GOYA.ErrorLevel += 'warning'
+		}
+		else {
+			GOYA.ErrorLevel += 'critical'
+		}
+	}	
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.InitAdditionalReturn
+//機能　：追加ヘッダ用変数を初期化します
+//------------------------------------------------------------------------------
+GOYA.InitAdditionalReturn : void
+{
+	GOYA.AdditionalReturn.String = ''
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.PushAdditionalReturn
+//機能　：ヘッダを追加します (設定はリクエストごとにリセットされます)
+//引数　：_argv[0] ヘッダ名  _argv[1] 値
+//------------------------------------------------------------------------------
+GOYA.PushAdditionalReturn : void
+{
+	_key="%(_argv[0]): "
+	_argv[0]=IARRAY
+	GOYA.AdditionalReturn.String += _key+TOSTR(_argv)+C_CRLF
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.ClearAdditionalReturnVariable
+//機能　：追加ヘッダ用変数を削除します
+//------------------------------------------------------------------------------
+GOYA.ClearAdditionalReturnVariable : void
+{
+	ERASEVAR('GOYA.AdditionalReturn.String')
+}
+
+//------------------------------------------------------------------------------
+//関数名：GOYA.GetAdditionalReturns
+//機能　：追加ヘッダを展開します
+//返値　：追加すべきヘッダ文字列 最後は必ず改行で終わる
+//------------------------------------------------------------------------------
+GOYA.GetAdditionalReturns
+{
+	_t=GOYA.AdditionalReturn.String
+	GOYA.AdditionalReturn.String = ''
+	_t
 }
 
 //------------------------------------------------------------------------------
@@ -512,12 +631,7 @@ GOYA.RequestLib
 		_pos         = STRSTR(_lin, ': ', 0)
 		var.lib.key ,= (_key = SUBSTR(_lin, 0, _pos))
 		_value       = SUBSTR(_lin, _pos + 2, _len - _pos - 2)
-		if TOSTR(TOAUTO(_value)) == _value {
-				_valuecv = TOAUTO(_value)
-		}
-		else {
-				_valuecv = _value
-		}
+		_valuecv     = TOAUTO(_value)
 		
 		var.lib.value ,= _valuecv
 		if _key == 'Result' {
