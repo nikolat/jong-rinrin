@@ -249,7 +249,7 @@ MJ.sutehai
 //**********************************************************
 MJ.sutehai_
 {
-	_dahai = ''
+/*	_dahai = ''
 	if MJ.Save.Richi == 1 {
 		//リーチ済ならツモ切り
 		_dahai = MJ.Save.Tsumo
@@ -268,9 +268,9 @@ MJ.sutehai_
 		_dahai = ''
 	}
 	"\![raiseother,%(sender),%(MJ.ResponseEventID),%(MJ.Version()),%(reference[1]),%(_action),%(_dahai)]\e"
-
-	//コマンドを送らないことでサーバーに対応を委任することもできる
-	//"\![raiseother,%(sender),%(MJ.ResponseEventID),%(MJ.Version()),%(reference[1]),]\e"
+*/
+	//コマンドを送らないことでサーバーに対応を委任する
+	"\![raiseother,%(sender),%(MJ.ResponseEventID),%(MJ.Version()),%(reference[1]),]\e"
 }
 
 //**********************************************************
