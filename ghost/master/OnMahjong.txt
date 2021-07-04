@@ -280,7 +280,7 @@ MJ.sutehai_
 //**********************************************************
 MJ.naku_
 {
-	_action = ''
+/*	_action = ''
 	if ASEARCH('ron', reference) >= 2 {
 		_action = 'ron'
 	}
@@ -288,6 +288,9 @@ MJ.naku_
 		_action = 'no'
 	}
 	"\![raiseother,%(sender),%(MJ.ResponseEventID),%(MJ.Version()),%(reference[1]),%(_action)]\e"
+*/
+	//コマンドを送らないことでサーバーに対応を委任する
+	"\![raiseother,%(sender),%(MJ.ResponseEventID),%(MJ.Version()),%(reference[1]),]\e"
 }
 
 //**********************************************************
