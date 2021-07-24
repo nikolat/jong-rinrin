@@ -53,7 +53,7 @@ MJ.ShowAllLog
 	for _i = 0; _i < ARRAYSIZE(reference); _i++ {
 		_res += 'Reference' + _i + ': ' + reference[_i] + '\n'
 	}
-	_res = '\C\0\s[0]\n\_q' + _res + '\e'
+	_res = '\C\0\b[2]\s[0]\n\_q' + _res + MJ.Main()
 	_res
 }
 
