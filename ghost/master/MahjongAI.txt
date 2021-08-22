@@ -4,37 +4,37 @@
 //**********************************************************
 
 //**********************************************************
-// ‰½‚ğØ‚é‚©
+// ä½•ã‚’åˆ‡ã‚‹ã‹
 //**********************************************************
-// ‚Ğ‚½‚·‚çµ‘Îq‚ğ–Úw‚·
+// ã²ãŸã™ã‚‰ä¸ƒå¯¾å­ã‚’ç›®æŒ‡ã™
 MJ.Naniwokiru
 {
 	_strTehai = _argv[0]
 	_strKawa  = _argv[1]
 	_arTehai = MJ.MakeArrayFromString(_strTehai)
 	_arKawa  = MJ.MakeArrayFromString(_strKawa)
-	//3–‡“¯‚¶”v‚ª‚ ‚ê‚ÎØ‚é
+	//3æšåŒã˜ç‰ŒãŒã‚ã‚Œã°åˆ‡ã‚‹
 	_dahai = MJ.Get3SameElement(_arTehai)
 	if _dahai != '' {
 		_dahai
 		return
 	}
-	//‰ß‹‚ÉØ‚Á‚½”v‚ğƒcƒ‚Ø‚è ƒtƒŠƒeƒ“–h~(”z—ñ‚ÌÅŒã‚Ì—v‘f‚ªƒcƒ‚‚Å‚ ‚é‘O’ñ‚Ì‚½‚ß’ˆÓ)
+	//éå»ã«åˆ‡ã£ãŸç‰Œã‚’ãƒ„ãƒ¢åˆ‡ã‚Š ãƒ•ãƒªãƒ†ãƒ³é˜²æ­¢(é…åˆ—ã®æœ€å¾Œã®è¦ç´ ãŒãƒ„ãƒ¢ã§ã‚ã‚‹å‰æã®ãŸã‚æ³¨æ„)
 	_dahai = _arTehai[ARRAYSIZE(_arTehai) - 1]
 	if ASEARCH(_dahai, _arKawa) >= 0 {
 		_dahai
 		return
 	}
-	//1–‡‚Ì‚İ‚Ì”v‚ğØ‚é
-	_dahai = MJ.GetSoloElement(MJ.ShuffleArray(_arTehai))//ƒ‰ƒ“ƒ_ƒ€«‚ª–³‚¢‚Æ‘Ò‚¿‚ªš”v‚É•Î‚é
+	//1æšã®ã¿ã®ç‰Œã‚’åˆ‡ã‚‹
+	_dahai = MJ.GetSoloElement(MJ.ShuffleArray(_arTehai))//ãƒ©ãƒ³ãƒ€ãƒ æ€§ãŒç„¡ã„ã¨å¾…ã¡ãŒå­—ç‰Œã«åã‚‹
 	if _dahai != '' {
 		_dahai
 		return
 	}
-	''//‚»‚ê‚Í˜a—¹‚Å‚ ‚é
+	''//ãã‚Œã¯å’Œäº†ã§ã‚ã‚‹
 }
 
-//"1m2m3m" -> ("1m", "2m", "3m")•ÏŠ·
+//"1m2m3m" -> ("1m", "2m", "3m")å¤‰æ›
 MJ.MakeArrayFromString
 {
 	_s = _argv[0]
@@ -51,12 +51,12 @@ MJ.MakeArrayFromString
 	_r
 }
 
-//ƒ\[ƒg
+//ã‚½ãƒ¼ãƒˆ
 MJ.SortHai
 {
 	_a = _argv
 	_r = IARRAY()
-	//ƒoƒuƒ‹ƒ\[ƒg‚Å‚¢‚¢‚âc
+	//ãƒãƒ–ãƒ«ã‚½ãƒ¼ãƒˆã§ã„ã„ã‚„â€¦
 	while ARRAYSIZE(_a) > 0
 	{
 		_n = ARRAYSIZE(_a)
@@ -83,7 +83,7 @@ MJ.SortHai
 	_r
 }
 
-//ƒ\[ƒg‡’è‹`
+//ã‚½ãƒ¼ãƒˆé †å®šç¾©
 MJ.GetSortCode
 {
 	_s = _argv[0]
@@ -133,12 +133,12 @@ MJ.ShuffleArray
 }
 
 //**********************************************************
-// Œü’®”ŒvZ
+// å‘è´æ•°è¨ˆç®—
 //**********************************************************
-//tehai‚Íƒ\[ƒg‚³‚ê‚Ä‚é‘O’ñ
+//tehaiã¯ã‚½ãƒ¼ãƒˆã•ã‚Œã¦ã‚‹å‰æ
 MJ.GetShanten
 {
-	//¡‚Íµ‘Îq‚Ì‚İ
+	//ä»Šã¯ä¸ƒå¯¾å­ã®ã¿
 	MJ.GetShantenChitoitsu(_argv)
 }
 

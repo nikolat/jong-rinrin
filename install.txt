@@ -1,4 +1,4 @@
-charset,Shift_JIS
+charset,UTF-8
 type,ghost
-name,-ƒŠƒ“ƒŠƒ“
+name,é›€-ãƒªãƒ³ãƒªãƒ³
 directory,jong-rinrin

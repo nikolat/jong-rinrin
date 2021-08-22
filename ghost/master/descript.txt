@@ -1,7 +1,7 @@
-charset,Shift_JIS
+charset,UTF-8
 type,ghost
-name,-ƒŠƒ“ƒŠƒ“
-sakura.name,ƒŠƒ“ƒŠƒ“
+name,é›€-ãƒªãƒ³ãƒªãƒ³
+sakura.name,ãƒªãƒ³ãƒªãƒ³
 kero.name,none
 craftman,Don
 craftmanurl,http://nikolat.herokuapp.com/
@@ -9,3 +9,4 @@ homeurl,https://raw.githubusercontent.com/nikolat/jong-rinrin/main/
 shiori,yaya.dll
 icon,icon.ico
 sstp.allowunspecifiedsend,0
+readme.charset,UTF-8
