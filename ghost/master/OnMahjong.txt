@@ -351,7 +351,7 @@ MJ.sutehai_
 		_action = 'tsumo'
 		_select = ''
 	}
-	elseif MJ.ShouldRichi(_shanten, MJ.Save.Richi, MJ.Save.Nokori) {
+	elseif MJ.ShouldRichi(MJ.Save.Tehai, _shanten, MJ.Save.Richi, MJ.Save.Nokori) {
 		_action = 'richi'
 		_select = _dahai
 	}

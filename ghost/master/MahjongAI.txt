@@ -489,18 +489,20 @@ MJ.GetKakanHai
 
 MJ.ShouldRichi
 {
-	_shanten = _argv[0]
-	_isRichi = _argv[1]
-	_nokori = _argv[2]
-	MJ.CanRichi(_shanten, _isRichi, _nokori)
+	_tehai = _argv[0]
+	_shanten = _argv[1]
+	_isRichi = _argv[2]
+	_nokori = _argv[3]
+	MJ.CanRichi(_tehai, _shanten, _isRichi, _nokori)
 }
 
 MJ.CanRichi
 {
-	_shanten = _argv[0]
-	_isRichi = _argv[1]
-	_nokori = _argv[2]
-	if _shanten == 0 && !_isRichi && _nokori >= 4 {
+	_tehai = _argv[0]
+	_shanten = _argv[1]
+	_isRichi = _argv[2]
+	_nokori = _argv[3]
+	if '<' !_in_ _tehai && _shanten == 0 && !_isRichi && _nokori >= 4 {
 		1
 		return
 	}
