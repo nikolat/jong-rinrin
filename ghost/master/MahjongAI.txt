@@ -6,32 +6,266 @@
 //**********************************************************
 // 何を切るか
 //**********************************************************
-// ひたすら七対子を目指す
+//テンパイに近づける
 MJ.Naniwokiru
 {
+	_strTehai13 = _argv[0]
+	_strTsumo = _argv[1]
+	_strKawa  = _argv[2]
+	_strBafuhai  = _argv[3]
+	_strJifuhai  = _argv[4]
+	_strDorahyouji  = _argv[5]
+
+	_strTehai14 = MJ.AddHai(_strTehai13, _strTsumo)
+	_arSutehaiKouho = MJ.Uniq(MJ.GetTehaiArrayWithoutFuro(_strTehai14))
+	//ドラ
+	_arDora = IARRAY()
+	_arDorahyouji = MJ.MakeArrayFromString(_strDorahyouji)
+	foreach _arDorahyouji; _d {
+		_arDora ,= MJ.GetDoraFromDorahyouji(_d)
+	}
+	_strDora = JOIN(_arDora, '')
+	//孤立牌
+	_arKoritsuhai = MJ.GetKoritsuHaiArray(_strTehai14);
+
+	_arDahai = IARRAY()
+	_point = -1
+	foreach _arSutehaiKouho; _sutehai
+	{
+		_strTehaiRemoved = MJ.RemoveHai(_strTehai14, _sutehai)
+		_arMentsuPattern = MJ.GetMentsuPattern(_strTehaiRemoved)
+		_shanten = MJ.GetShantenYaku(_strTehaiRemoved, _strBafuhai, _strJifuhai)
+		_shantenPoint = 10000 * (10 - _shanten)
+		_machiPoint = 0
+		_elementMaxPoint = 0
+		//テンパイ時は待ちの広さ・和了点の高さを考慮
+		if _shanten == 0 {
+			_arMachi = MJ.GetMachiArray(_strTehaiRemoved)
+			foreach _arMachi; _machi {
+				_score = MJ.GetScore(_strTehaiRemoved, _machi, _strBafuhai, _strJifuhai, _strDora)
+				if (_score > 0) {
+					_machiPoint += _score
+				}
+			}
+		}
+		else {
+			foreach _arMentsuPattern; _strMentsu {
+				_elementPoint = 0
+				if _strMentsu == "chitoitsu" || _strMentsu == "kokushimusou" {
+					_elementPoint = 0
+				}
+				else {
+					_ap = SPLIT(_strMentsu, ',')
+					_arTatsu = IARRAY()
+					if _ap[0] != '' {
+						_elementPoint += 40//雀頭
+					}
+					foreach _ap; _p {
+						if STRLEN(_p) == 6 {
+							elementPoint += 90//面子
+						}
+						elseif STRLEN(_p) == 4 {
+							_arTatsu ,= _p
+						}
+					}
+					foreach _arTatsu; _tatsu {
+						_t1 = TOINT(SUBSTR(_tatsu, 0, 1))
+						_t2 = TOINT(SUBSTR(_tatsu, 2, 1))
+						if (_t1 != 1) && (_t1 + 1 == _t2) && (_t2 != 9) {
+							_elementPoint += 60//両面
+						}
+						elseif _t1 == _t2 {
+							_elementPoint += 40//対子
+						}
+						elseif (_t1 == 1) && (_t2 == 2) || (_t1 == 8) && (_t2 == 9) {
+							_elementPoint += 20//辺張
+						}
+						else {
+							_elementPoint += 30//嵌張
+						}
+					}
+				}
+				if _elementMaxPoint < _elementPoint {
+					_elementMaxPoint = _elementPoint
+				}
+			}
+		}
+		//孤立牌を優先的に切る
+		_koritsuPoint = 0
+		if ASEARCH(_sutehai, _arKoritsuhai) >= 0 {
+			_koritsuPoint = 500
+		}
+		//既に捨てた牌を優先的に切る
+		_furitenPoint = 0
+		if _sutehai _in_ _strKawa {
+			_furitenPoint = 10
+		}
+		//ドラは残しておきたい
+		_doraPoint = 0
+		if ASEARCH(_sutehai, _arDora) >= 0 {
+			_doraPoint = -50
+		}
+		_dahaiPoint = _shantenPoint + _machiPoint + _elementMaxPoint + _koritsuPoint + _furitenPoint + _doraPoint
+		if _point < _dahaiPoint	{
+			_point = _dahaiPoint
+			_arDahai = (IARRAY, _sutehai)
+		}
+		elseif _point == _dahaiPoint {
+			_arDahai ,= _sutehai
+		}
+	}
+	_n = ARRAYSIZE(_arDahai)
+	_index = RAND(_n)
+	_arDahai[_index]
+}
+
+//手牌から副露を除去
+MJ.GetTehaiArrayWithoutFuro
+{
 	_strTehai = _argv[0]
-	_strKawa  = _argv[1]
-	_arTehai = MJ.MakeArrayFromString(_strTehai)
-	_arKawa  = MJ.MakeArrayFromString(_strKawa)
-	//3枚同じ牌があれば切る
-	_dahai = MJ.Get3SameElement(_arTehai)
-	if _dahai != '' {
-		_dahai
-		return
+	_r = IARRAY()
+	for _i = 0; _i < STRLEN(_strTehai); _i += 2 {
+		if SUBSTR(_strTehai, _i, 1) _in_ '<(' {
+			_r
+			return
+		}
+		_h = SUBSTR(_strTehai, _i, 2)
+		_r ,= _h
 	}
-	//過去に切った牌をツモ切り フリテン防止(配列の最後の要素がツモである前提のため注意)
-	_dahai = _arTehai[ARRAYSIZE(_arTehai) - 1]
-	if ASEARCH(_dahai, _arKawa) >= 0 {
-		_dahai
-		return
+	_r
+}
+
+//配列から重複する要素を除く
+MJ.Uniq
+{
+	_ary = _argv
+	_a = IARRAY()
+	for _i = 0; _i < ARRAYSIZE(_ary); _i++ {
+		if (ASEARCH(_ary[_i], _a) == -1)
+			_a ,= _ary[_i];
 	}
-	//1枚のみの牌を切る
-	_dahai = MJ.GetSoloElement(MJ.ShuffleArray(_arTehai))//ランダム性が無いと待ちが字牌に偏る
-	if _dahai != '' {
-		_dahai
-		return
+	_a;
+}
+
+//孤立牌の探索
+MJ.GetKoritsuHaiArray
+{
+	_hai = MJ.GetTehaiArrayWithoutFuro(_argv[0])
+	_arRet = IARRAY()
+	for _i = 0; _i < ARRAYSIZE(_hai); _i++ {
+		_num = TOINT(SUBSTR(_hai[_i], 0, 1))
+		_color = SUBSTR(_hai[_i], 1, 1)
+		if _color _in_ 'mps' {
+			_haiP2 = '' + (_num - 2) + _color
+			_haiP1 = '' + (_num - 1) + _color
+			_haiN1 = '' + (_num + 1) + _color
+			_haiN2 = '' + (_num + 2) + _color
+			if !(ASEARCH(_haiP2, _hai) >= 0/
+				|| ASEARCH(_haiP1, _hai) >= 0/
+				|| ARRAYSIZE(ASEARCHEX(_hai[_i], _hai)) > 1/
+				|| ASEARCH(_haiN1, _hai) >= 0/
+				|| ASEARCH(_haiN2, _hai) >= 0) {
+				_arRet ,= _hai[_i]
+			}
+		}
+		elseif (_color == 'z')
+		{
+			if ARRAYSIZE(ASEARCHEX(_hai[_i], _hai)) == 1 {
+				_arRet ,= _hai[_i]
+			}
+		}
 	}
-	''//それは和了である
+	_arRet
+}
+
+//牌を追加
+MJ.AddHai
+{
+	_strHai1 = _argv[0]
+	_strHai2 = _argv[1]
+	_arHai2 = MJ.MakeArrayFromString(_strHai2);
+	_strToAdd = _strHai1
+	for _i = 0; _i < ARRAYSIZE(_arHai2); _i++ {
+		_strAdded = '';
+		_isAdded = 0
+		for _j = 0; _j < STRLEN(_strToAdd); _j++ {
+			if SUBSTR(_strToAdd, _j, 1) == '<' {
+				if !_isAdded {
+					_isAdded = 1
+					_strAdded = JOIN(MJ.SortHai(MJ.MakeArrayFromString(_strAdded + _arHai2[_i])), '')
+				}
+				if SUBSTR(_strToAdd, _j + 7, 1) == '>' {
+					_strAdded += SUBSTR(_strToAdd, _j, 8)
+					_j += 7
+				}
+				elseif SUBSTR(_strToAdd, _j + 9, 1) == '>' {
+					_strAdded += SUBSTR(_strToAdd, _j, 10)
+					_j += 9
+				}
+			}
+			elseif SUBSTR(_strToAdd, _j, 1) == '(' {
+				if !_isAdded {
+					_isAdded = 1
+					_strAdded = JOIN(MJ.SortHai(MJ.MakeArrayFromString(_strAdded + _arHai2[_i])), '')
+				}
+				if SUBSTR(_strToAdd, _j + 9, 1) == ')' {
+					_strAdded += SUBSTR(_strToAdd, _j, 10)
+					_j += 9
+				}
+			}
+			else {
+				_strAdded += SUBSTR(_strToAdd, _j, 2)
+				_j++
+			}
+		}
+		if !_isAdded {
+			_strAdded = JOIN(MJ.SortHai(MJ.MakeArrayFromString(_strAdded + _arHai2[_i])), '')
+		}
+		_strToAdd = _strAdded
+	}
+	_strToAdd
+}
+
+//牌を除去
+MJ.RemoveHai
+{
+	_strHai1 = _argv[0]
+	_strHai2 = _argv[1]
+	_arHai2 = MJ.MakeArrayFromString(_strHai2)
+	_strToRemove = _strHai1
+	for _i = 0; _i < ARRAYSIZE(_arHai2); _i++ {
+		_strRemoved = ''
+		_isRemoved = 0
+		for _j = 0; _j < STRLEN(_strToRemove); _j++ {
+			if SUBSTR(_strToRemove, _j, 1) == '<' {
+				if SUBSTR(_strToRemove, _j + 7, 1) == '>' {
+					_strRemoved += SUBSTR(_strToRemove, _j, 8)
+					_j += 7
+				}
+				elseif SUBSTR(_strToRemove, _j + 9, 1) == '>' {
+					_strRemoved += SUBSTR(_strToRemove, _j, 10)
+					_j += 9
+				}
+			}
+			elseif SUBSTR(_strToRemove, _j, 1) == '(' {
+				if SUBSTR(_strToRemove, _j + 9, 1) == ')' {
+					_strRemoved += SUBSTR(_strToRemove, _j, 10)
+					_j += 9
+				}
+			}
+			else {
+				if !_isRemoved && SUBSTR(_strToRemove, _j, 2) == _arHai2[_i] {
+					_isRemoved = 1;
+				}
+				else {
+					_strRemoved += SUBSTR(_strToRemove, _j, 2);
+				}
+				_j++;
+			}
+		}
+		_strToRemove = _strRemoved
+	}
+	_strToRemove
 }
 
 //"1m2m3m" -> ("1m", "2m", "3m")変換
@@ -83,6 +317,29 @@ MJ.SortHai
 	_r
 }
 
+//ドラ表示牌からドラを求める
+MJ.GetDoraFromDorahyouji
+{
+	_hai = _argv[0]
+	_num = TOINT(SUBSTR(_hai, 0, 1))
+	_color = SUBSTR(_hai, 1, 1)
+	if _color _in_ 'mps' {
+		_n = _num % 9 + 1
+		TOSTR(_n) + _color
+	}
+	elseif 1 <= _num && _num <= 4 {
+		_n = _num % 4 + 1
+		TOSTR(_n) + _color
+	}
+	elseif _num == 7 {
+		'5z'
+	}
+	else {
+		_n = _num + 1
+		TOSTR(_n) + _color
+	}
+}
+
 //ソート順定義
 MJ.GetSortCode
 {
@@ -91,76 +348,292 @@ MJ.GetSortCode
 	ASEARCH(_s, _a)
 }
 
-MJ.Get3SameElement
+//**********************************************************
+// 副露判断
+//**********************************************************
+MJ.GetAnkanHaiBest
 {
-	_a = _argv
-	_n = _argc
-	for _i = 0; _i < _n; _i++ {
-		_num = ARRAYSIZE(ASEARCHEX(_a[_i], _a))
-		if _num >= 3 {
-			_a[_i]
+	_tehai = _argv[0]
+	_tsumoHai = _argv[1]
+	_isRichi = _argv[2]
+	_bafuHai = _argv[3]
+	_jifuHai = _argv[4]
+	if !MJ.CanAnkan(_tehai, _tsumoHai, _isRichi) {
+		''
+		return
+	}
+	if _isRichi {
+		_tsumoHai
+		return
+	}
+	//自身のリーチ後のみ暗槓する方針のため、コメントアウト
+//	_tehaiAddTsumo = MJ.AddHai(_tehai, _tsumoHai)
+//	_arAnkanHai = MJ.GetAnkanHai(_tehaiAddTsumo)
+//	_shantenBefore = MJ.GetShantenYaku(_tehai, _bafuHai, _jifuHai)
+//	_arAnkanHaiUseful = IARRAY()
+//	foreach _arAnkanHai; _h {
+//		_strTehai = MJ.RemoveHai(_tehaiAddTsumo, "%(_h)%(_h)%(_h)%(_h)") + "(%(_h)%(_h)%(_h)%(_h))"
+//		_shantenAfter = MJ.GetShantenYaku(_strTehai, _bafuHai, _jifuHai)
+//		if (_shantenBefore >= _shantenAfter)
+//			_arAnkanHaiUseful ,= _h
+//	}
+//	_n = ARRAYSIZE(_arAnkanHaiUseful)
+//	if _n > 0 {
+//		_arAnkanHaiUseful[RAND(_n)]
+//		return
+//	}
+	''
+}
+
+//本当は四開槓の場合を考慮しないといけない
+MJ.CanAnkan
+{
+	_tehai = _argv[0]
+	_tsumoHai = _argv[1]
+	_isRichi = _argv[2]
+
+	_arAnkanHai = MJ.GetAnkanHai(MJ.AddHai(_tehai, _tsumoHai))
+	if ARRAYSIZE(_arAnkanHai) == 0 {
+		0
+		return
+	}
+	//リーチ後の場合
+	if _isRichi {
+		//送りカンの場合
+		if ASEARCH(_tsumoHai, _arAnkanHai) == -1 {
+			0
 			return
 		}
+		//和了の形が変わる場合
+		_arMentsuPattern = MJ.GetMentsuPattern(_tehai)
+		foreach _arMentsuPattern; _m {
+			_ap = SPLIT(_m, ',')
+			if (ASEARCH(_tsumoHai + _tsumoHai + _tsumoHai, _ap) == -1) {//常に暗刻でないとダメ
+				0
+				return
+			}
+		}
+	}
+	1
+}
+
+MJ.GetAnkanHai
+{
+	_tehai = _argv[0]
+	_arHai = MJ.GetTehaiArrayWithoutFuro(_tehai)
+	_arRet = IARRAY()
+	foreach MJ.Uniq(_arHai); _h {
+		if ARRAYSIZE(ASEARCHEX(_h, _arHai)) >= 4 {
+			_arRet ,= _h
+		}
+	}
+	_arRet
+}
+
+MJ.GetKakanHaiBest
+{
+	_tehai = _argv[0]
+	_tsumoHai = _argv[1]
+	_bafuHai = _argv[2]
+	_jifuHai = _argv[3]
+	_r = ''
+	if !MJ.CanKakan(_tehai, _tsumoHai) {
+		_r
+		return
+	}
+	_tehaiAddTsumo = MJ.AddHai(_tehai, _tsumoHai)
+	_arKakanHai = MJ.GetKakanHai(_tehaiAddTsumo)
+	_shantenBefore = MJ.GetShantenYaku(_tehai, _bafuHai, _jifuHai)
+	_arKakanHaiUseful = IARRAY()
+	foreach _arKakanHai; _h {
+		_strTehai = REPLACE(_tehaiAddTsumo, "<%(_h)%(_h)%(_h)>", "<%(_h)%(_h)%(_h)%(_h)>", 1)
+		_strTehai = MJ.RemoveHai(_strTehai, _h)
+		_shantenAfter = MJ.GetShantenYaku(_strTehai, _bafuHai, _jifuHai)
+		if (_shantenBefore >= _shantenAfter)
+			_arKakanHaiUseful ,= _h
+	}
+	_n = ARRAYSIZE(_arKakanHaiUseful)
+	if _n > 0 {
+		_arKakanHaiUseful[RAND(_n)]
+		return
 	}
 	''
 }
 
-MJ.GetSoloElement
+//本当は四開槓の場合を考慮しないといけない
+MJ.CanKakan
 {
-	_a = _argv
-	_n = _argc
-	for _i = 0; _i < _n; _i++ {
-		_num = ARRAYSIZE(ASEARCHEX(_a[_i], _a))
-		if _num == 1 {
-			_a[_i]
-			return
-		}
+	_tehai = _argv[0]
+	_tsumoHai = _argv[1]
+
+	_arKakanHai = MJ.GetKakanHai(MJ.AddHai(_tehai, _tsumoHai))
+	if ARRAYSIZE(_arKakanHai) == 0 {
+		0
+		return
 	}
-	''
+	1
 }
 
-MJ.ShuffleArray
+MJ.GetKakanHai
 {
-	_a = _argv
+	_tehai = _argv[0]
+	_arHai = MJ.GetTehaiArrayWithoutFuro(_tehai)
+	_arRet = IARRAY()
+	foreach MJ.Uniq(_arHai); _h {
+		if  "<%(_h)%(_h)%(_h)>" _in_ _tehai {
+			_arRet ,= _h
+		}
+	}
+	_arRet
+}
+
+MJ.ShouldRichi
+{
+	_shanten = _argv[0]
+	_isRichi = _argv[1]
+	_nokori = _argv[2]
+	MJ.CanRichi(_shanten, _isRichi, _nokori)
+}
+
+MJ.CanRichi
+{
+	_shanten = _argv[0]
+	_isRichi = _argv[1]
+	_nokori = _argv[2]
+	if _shanten == 0 && !_isRichi && _nokori >= 4 {
+		1
+		return
+	}
+	0
+}
+
+MJ.ShouldDaiminkan
+{
+	0
+}
+
+MJ.ShouldPon
+{
+	_tehai = _argv[0]
+	_sutehai = _argv[1]
+	_bafuHai = _argv[2]
+	_jifuHai = _argv[3]
+	_h = _sutehai
+	_tehaiNew = MJ.RemoveHai(_tehai, _h + _h) + '<' + _h + _h + _h + '>'
+	_shantenBefore = MJ.GetShantenYaku(_tehai, _bafuHai, _jifuHai)
+	_shantenAfter = MJ.GetShantenYaku(_tehaiNew, _bafuHai, _jifuHai)
+	if _shantenAfter < _shantenBefore {
+		1
+		return
+	}
+	0
+}
+
+MJ.GetChiMaterialBest
+{
+	_tehai = _argv[0]
+	_sutehai = _argv[1]
+	_bafuHai = _argv[2]
+	_jifuHai = _argv[3]
+
+	_arChi = MJ.GetChiMaterial(_tehai, _sutehai)
+	_shantenBefore = MJ.GetShantenYaku(_tehai, _bafuHai, _jifuHai)
 	_r = IARRAY()
-	while ARRAYSIZE(_a) > 0 {
-		_n = ARRAYSIZE(_a)
-		_index = RAND(_n)
-		_r ,= _a[_index]
-		_a[_index] = IARRAY
+	foreach _arChi; _c {
+		_tehaiNew = MJ.RemoveHai(_tehai, _c) + '<' + JOIN(MJ.SortHai(MJ.MakeArrayFromString(_c + _sutehai)), '') + '>'
+		_shantenAfter = MJ.GetShantenYaku(_tehaiNew, _bafuHai, _jifuHai)
+		if _shantenAfter < _shantenBefore {
+			_r ,= _c
+		}
+	}
+	_n = ARRAYSIZE(_r)
+	if _n > 0 {
+		_r[RAND(_n)]
+	}
+	else {
+		''
+	}
+}
+
+MJ.GetChiMaterial
+{
+	_strTehai = _argv[0]
+	_sutehai = _argv[1]
+	_r = IARRAY()
+
+	_n = SUBSTR(_sutehai, 0, 1)
+	_color = SUBSTR(_sutehai, 1, 1)
+	if _color == 'z' {
+		_r
+		return
+	}
+	_arTehai = MJ.GetTehaiArrayWithoutFuro(_strTehai)
+	_a = IARRAY()
+	foreach _arTehai; _hai {
+		if SUBSTR(_hai, 1, 1) == _color {
+			_a ,= TOINT(SUBSTR(_hai, 0, 1))
+		}
+	}
+	if ASEARCH(_n - 2, _a) >= 0 && ASEARCH(_n - 1, _a) >= 0 {
+		_r ,= TOSTR(_n - 2) + _color + TOSTR(_n - 1) + _color
+	}
+	if ASEARCH(_n - 1, _a) >= 0 && ASEARCH(_n + 1, _a) >= 0 {
+		_r ,= TOSTR(_n - 1) + _color + TOSTR(_n + 1) + _color
+	}
+	if ASEARCH(_n + 1, _a) >= 0 && ASEARCH(_n + 2, _a) >= 0 {
+		_r ,= TOSTR(_n + 1) + _color + TOSTR(_n + 2) + _color
 	}
 	_r
 }
 
 //**********************************************************
-// 向聴数計算
+// SAORIを使用する関数
 //**********************************************************
-//tehaiはソートされてる前提
-MJ.GetShanten
+//役のあるシャンテン数を求める
+MJ.GetShantenYaku
 {
-	//今は七対子のみ
-	MJ.GetShantenChitoitsu(_argv)
+	_strTehai = _argv[0]
+	_strBafuhai = _argv[1]
+	_strJifuhai = _argv[2]
+	_dll = 'saori/MahjongUtil/MahjongUtil.dll'
+	_shanten = FUNCTIONEX(_dll, 'shanten_yaku' ,_strTehai, _strBafuhai, _strJifuhai)
+	_shanten
 }
 
-MJ.GetShantenChitoitsu
+//手牌の形のパターンを求める
+MJ.GetMentsuPattern
 {
-	_tehai = _argv
-	_nToitsu = 0
-	_nType = 0
-	_baseHai = ''
-	for _i = 0; _i < ARRAYSIZE(_tehai); _i++ {
-		if _baseHai != _tehai[_i] {
-			_nType++
-			_baseHai = _tehai[_i]
-			if _baseHai == _tehai[_i + 1] {
-				_i++
-				_nToitsu++
-			}
-		}
-	}
-	if _nType >= 7 {
-		_nType = 7
-	}
-	_n = 6 - _nToitsu + (7 - _nType)
-	_n
+	_strTehai = _argv[0]
+	_dll = 'saori/MahjongUtil/MahjongUtil.dll'
+	_shanten = FUNCTIONEX(_dll, 'shanten' ,_strTehai)
+	_mentsuPattern = valueex
+	_mentsuPattern
+}
+
+//待ちを求める
+MJ.GetMachiArray
+{
+	_strTehai = _argv[0]
+	_dll = 'saori/MahjongUtil/MahjongUtil.dll'
+	_strMachi = FUNCTIONEX(_dll, 'machi' ,_strTehai)
+	MJ.MakeArrayFromString(_strMachi)
+}
+
+//和了点を求める
+MJ.GetScore{
+	_strTehai = _argv[0]
+	_strAtarihai = _argv[1]
+	_strBafuhai = _argv[2]
+	_strJifuhai = _argv[3]
+	_strDora = _argv[4]
+	_isTsumo = 1
+	_isRichi = 0
+	_isIppatsu = 0
+	_isChankan = 0
+	_isRinshan = 0
+	_isFinalTileWin = 0
+	_is1stRound = 0
+	_dll = 'saori/MahjongUtil/MahjongUtil.dll'
+	_score = FUNCTIONEX(_dll, 'score' ,_strTehai, _strAtarihai, _strBafuhai, _strJifuhai, _strDora, _isTsumo, _isRichi, _isIppatsu, _isChankan, _isRinshan, _isFinalTileWin, _is1stRound)
+	_score
 }

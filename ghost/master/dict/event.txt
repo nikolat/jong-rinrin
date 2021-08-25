@@ -101,9 +101,13 @@ MouseMove0Bust : nonoverlap
 //******************************************************************************
 event.OnKeyPress
 {
-	if reference[0] == 'r' {
-		'\![reload,shiori]\0\s[0]\_qReloaded.\e'
+	if ISFUNC('sys.key.' + reference[0]) {
+		EVAL('sys.key.' + reference[0])
 	}
+}
+sys.key.r
+{
+	'\![reload,shiori]\0\s[0]\_qReloaded.\_q\e'
 }
 //******************************************************************************
 // other

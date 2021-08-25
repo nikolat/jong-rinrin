@@ -93,6 +93,7 @@ MJ.gamestart
 {
 	'\0\s[0]よろしく。\e'
 	'\0\s[7]いざ勝負！\e'
+	MJ.Save.PlayerName = reference[3,6]
 }
 
 //**********************************************************
@@ -105,6 +106,7 @@ MJ.gamestart
 MJ.gameend
 {
 	'\0\s[0]いい対局だった。\e'
+	ERASEVAR('MJ.Save.PlayerName')
 }
 
 //**********************************************************
@@ -119,6 +121,40 @@ MJ.kyokustart
 	'\0\s[0]\e'
 	MJ.Save.Kawa = ''
 	MJ.Save.Richi = 0
+	MJ.Save.Dorahyouji = ''
+	MJ.Save.Bafuhai = MJ.GetBafuhai(reference[2])
+	MJ.Save.Jifuhai = MJ.GetJifuhai(reference[3])
+}
+
+MJ.GetBafuhai
+{
+	case _argv[0] {
+	when '東' {
+		'1z'
+	}
+	when '南' {
+		'2z'
+	}
+	else {
+		''
+	}
+	}
+}
+
+MJ.GetJifuhai
+{
+	_oya = -1
+	_self = -1
+	for _i = 0; _i < 4; _i++ {
+		if MJ.Save.PlayerName[_i] == _argv[0] {
+			_oya = _i
+		}
+		if MJ.Save.PlayerName[_i] == MJ.PlayerName() {
+			_self = _i
+		}
+	}
+	_n = (4 + _self - _oya) % 4 + 1
+	'' + _n + 'z'
 }
 
 //**********************************************************
@@ -132,6 +168,10 @@ MJ.kyokuend
 	ERASEVAR('MJ.Save.Tehai')
 	ERASEVAR('MJ.Save.Kawa')
 	ERASEVAR('MJ.Save.Richi')
+	ERASEVAR('MJ.Save.Dorahyouji')
+	ERASEVAR('MJ.Save.Bafuhai')
+	ERASEVAR('MJ.Save.Jifuhai')
+	ERASEVAR('MJ.Save.Furo.Own')
 }
 
 //**********************************************************
@@ -195,6 +235,7 @@ MJ.haipai
 //**********************************************************
 MJ.dora
 {
+	MJ.Save.Dorahyouji += reference[2]
 }
 
 //**********************************************************
@@ -204,6 +245,35 @@ MJ.dora
 //**********************************************************
 MJ.open
 {
+	if reference[2] == MJ.PlayerName() {
+		_h = reference[3]
+		case MJ.Save.Furo.Own {
+		when 'chi' {
+			_toRemove = MJ.RemoveHai(_h, MJ.Save.Sutehai)
+			MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _toRemove) + '<' + _h + '>'
+		}
+		when 'pon' {
+			_toRemove = MJ.RemoveHai(_h, MJ.Save.Sutehai)
+			MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _toRemove) + '<' + _h + '>'
+		}
+		when 'kan' {
+			if STRLEN(_h) == 2 {//加槓
+				MJ.Save.Tehai = MJ.AddHai(MJ.Save.Tehai, MJ.Save.Tsumo)
+				MJ.Save.Tehai = REPLACE(MJ.Save.Tehai, _h + _h + _h, _h + _h + _h + _h, 1)
+				MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _h)
+			}
+			elseif MJ.Save.Tsumo != '' {//暗槓
+				MJ.Save.Tehai = MJ.AddHai(MJ.Save.Tehai, MJ.Save.Tsumo)
+				MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _h) + '(' + _h + ')'
+			}
+			else {//大明槓
+				_toRemove = MJ.RemoveHai(_h, MJ.Save.Sutehai)
+				MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _toRemove) + '<' + _h + '>'
+			}
+		}
+		}
+		MJ.Save.Furo.Own = ''
+	}
 }
 
 //**********************************************************
@@ -214,6 +284,7 @@ MJ.open
 //**********************************************************
 MJ.tsumo
 {
+	MJ.Save.Nokori = reference[3]
 	MJ.Save.Tsumo = reference[4]
 	if 'talking' !_in_ status {
 		'\0\s[0]\e'
@@ -229,6 +300,7 @@ MJ.sutehai
 {
 	//自分の捨牌通知のみに反応
 	if reference[2] != MJ.PlayerName() {
+		MJ.Save.Sutehai = reference[3]
 		return
 	}
 
@@ -237,8 +309,8 @@ MJ.sutehai
 
 	//ツモ切りでない
 	if MJ.Save.Tsumo != _sutehai {
-		MJ.Save.Tehai += MJ.Save.Tsumo
-		MJ.Save.Tehai = REPLACE(MJ.Save.Tehai, _sutehai, '', 1)
+		MJ.Save.Tehai = MJ.AddHai(MJ.Save.Tehai, MJ.Save.Tsumo)
+		MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _sutehai)
 		if 'talking' !_in_ status && !RAND(5) {
 			'\0\s[5]…。\e'
 		}
@@ -258,28 +330,47 @@ MJ.sutehai
 //**********************************************************
 MJ.sutehai_
 {
-//	_dahai = ''
-//	if MJ.Save.Richi == 1 {
-//		//リーチ済ならツモ切り
-//		_dahai = MJ.Save.Tsumo
-//	}
-//	else {
-//		_dahai = MJ.Naniwokiru(MJ.Save.Tehai + MJ.Save.Tsumo, MJ.Save.Kawa)
-//	}
-//	_shanten = MJ.GetShanten(MJ.SortHai(MJ.MakeArrayFromString(MJ.Save.Tehai + MJ.Save.Tsumo)))
-//	_action = 'sutehai'
-//	if _shanten == 0 && MJ.Save.Richi == 0 {
-//		_action = 'richi'
-//		MJ.Save.Richi = 1
-//	}
-//	elseif _shanten == -1 {
-//		_action = 'tsumo'
-//		_dahai = ''
-//	}
-//	"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),%(_action),%(_dahai)]\e"
+	_shanten = MJ.GetShantenYaku(MJ.AddHai(MJ.Save.Tehai, MJ.Save.Tsumo), MJ.Save.Bafuhai, MJ.Save.Jifuhai)
+	_dahai = ''
+	_ankanHai = ''
+	_kakanHai = ''
+	if _shanten >= 0 {
+		if MJ.Save.Richi {
+			//リーチ済ならツモ切り
+			_dahai = MJ.Save.Tsumo
+		}
+		else {
+			_dahai = MJ.Naniwokiru(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Kawa, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Dorahyouji)
+		}
+		_ankanHai = MJ.GetAnkanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Richi, MJ.Save.Bafuhai, MJ.Save.Jifuhai)
+		_kakanHai = MJ.GetKakanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Bafuhai, MJ.Save.Jifuhai)
+	}
+	_action = ''
+	_select = ''
+	if _shanten == -1 {
+		_action = 'tsumo'
+		_select = ''
+	}
+	elseif MJ.ShouldRichi(_shanten, MJ.Save.Richi, MJ.Save.Nokori) {
+		_action = 'richi'
+		_select = _dahai
+	}
+	elseif _ankanHai != '' {
+		_action = 'ankan'
+		_select = _ankanHai
+	}
+	elseif _kakanHai != '' {
+		_action = 'kakan'
+		_select = _kakanHai
+	}
+	else {
+		_action = 'sutehai'
+		_select = _dahai
+	}
+	"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),%(_action),%(_select)]\e"
 
 	//コマンドを送らないことでサーバーに対応を委任する
-	"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),]\e"
+	//"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),]\e"
 }
 
 //**********************************************************
@@ -289,17 +380,41 @@ MJ.sutehai_
 //**********************************************************
 MJ.naku_
 {
-//	_action = ''
-//	if ASEARCH('ron', reference) >= 2 {
-//		_action = 'ron'
-//	}
-//	else {
-//		_action = 'no'
-//	}
-//	"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),%(_action)]\e"
+	_action = ''
+	for _i = 2; _i < ARRAYSIZE(reference); _i++ {
+		if reference[_i] == 'ron' {
+			_action = 'ron'
+			break
+		}
+		if reference[_i] == 'kan' {
+			if MJ.ShouldDaiminkan(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai) {
+				_action = 'kan'
+				break
+			}
+		}
+		if reference[_i] == 'pon' {
+			if MJ.ShouldPon(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai) {
+				_action = 'pon'
+				break
+			}
+		}
+		if reference[_i] == 'chi' {
+			_cm = MJ.GetChiMaterialBest(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai)
+			if _cm != '' {
+				_am = MJ.MakeArrayFromString(_cm)
+				_action = 'chi'
+				_action += ",%(_am[0]),%(_am[1])"
+				break
+			}
+		}
+	}
+	if _action == '' {
+		_action = 'no'
+	}
+	"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),%(_action)]\e"
 
 	//コマンドを送らないことでサーバーに対応を委任する
-	"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),]\e"
+	//"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),]\e"
 }
 
 //**********************************************************
@@ -325,14 +440,17 @@ MJ.say
 		when 'chi' {
 			_say = '\s[6]チー'
 			_aqtk = "ち'ー"
+			MJ.Save.Furo.Own = 'chi'
 		}
 		when 'pon' {
 			_say = '\s[6]ポン'
 			_aqtk = "ぽ'ん"
+			MJ.Save.Furo.Own = 'pon'
 		}
 		when 'kan' {
 			_say = '\s[6]カン'
 			_aqtk = "か'ん"
+			MJ.Save.Furo.Own = 'kan'
 		}
 		when 'ron' {
 			_say = '\s[8]ロン'
@@ -345,6 +463,7 @@ MJ.say
 		when 'richi' {
 			_say = '\s[5]リーチ'
 			_aqtk = "り'ーち"
+			MJ.Save.Richi = 1
 		}
 		when 'tenpai' {
 			_say = '\s[5]テンパイ'
@@ -355,7 +474,7 @@ MJ.say
 			_aqtk = "の'ーてん"
 		}
 		}
-		'\0' + _say + '\_w[2000]\e'
+		'\0' + _say + '\e'
 		_dll = 'saori/aqtk/AqTalkSaori.dll'
 		void FUNCTIONEX(_dll, 'PLAYASYNC' ,_aqtk)
 	}
@@ -387,4 +506,3 @@ MJ.ryukyoku
 {
 	MJ.Save.Status = '流局'
 }
-
