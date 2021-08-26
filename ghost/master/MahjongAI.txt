@@ -11,10 +11,12 @@ MJ.Naniwokiru
 {
 	_strTehai13 = _argv[0]
 	_strTsumo = _argv[1]
-	_strKawa  = _argv[2]
-	_strBafuhai  = _argv[3]
-	_strJifuhai  = _argv[4]
-	_strDorahyouji  = _argv[5]
+	_strKawa = _argv[2]
+	_strBafuhai = _argv[3]
+	_strJifuhai = _argv[4]
+	_strDorahyouji = _argv[5]
+	_aryPlayerRichi = SPLIT(_argv[6], ',')
+	_aryPlayerGenbutsu = SPLIT(_argv[7], ',')
 
 	_strTehai14 = MJ.AddHai(_strTehai13, _strTsumo)
 	_arSutehaiKouho = MJ.Uniq(MJ.GetTehaiArrayWithoutFuro(_strTehai14))
@@ -34,18 +36,20 @@ MJ.Naniwokiru
 	{
 		_strTehaiRemoved = MJ.RemoveHai(_strTehai14, _sutehai)
 		_shanten = MJ.GetShantenYaku(_strTehaiRemoved, _strBafuhai, _strJifuhai)
-		_shantenPoint = 10000 * (10 - _shanten)
+		_shantenPoint = 1000 * (10 - _shanten)
 		_machiPoint = 0
 		_elementMaxPoint = 0
 		//テンパイ時は待ちの広さ・和了点の高さを考慮
 		if _shanten == 0 {
 			_arMachi = MJ.GetMachiArray(_strTehaiRemoved)
 			foreach _arMachi; _machi {
-				_score = MJ.GetScore(_strTehaiRemoved, _machi, _strBafuhai, _strJifuhai, _strDora)
+				_isTsumo = 1//ツモった場合を想定
+				_score = MJ.GetScore(_strTehaiRemoved, _machi, _strBafuhai, _strJifuhai, _strDora, _isTsumo)
 				if (_score > 0) {
 					_machiPoint += _score
 				}
 			}
+			_shantenPoint += 10000//テンパイを崩してまでオリないこととする
 		}
 		else {
 			_arMentsuPattern = MJ.GetMentsuPattern(_strTehaiRemoved)
@@ -106,7 +110,19 @@ MJ.Naniwokiru
 		if ASEARCH(_sutehai, _arDora) >= 0 {
 			_doraPoint = -50
 		}
-		_dahaiPoint = _shantenPoint + _machiPoint + _elementMaxPoint + _koritsuPoint + _furitenPoint + _doraPoint
+		//現物を優先的に切る
+		_genbutsuPoint = 0
+		for _i = 0; _i < ARRAYSIZE(_aryPlayerRichi); _i++ {
+			if TOINT(_aryPlayerRichi[_i]) {
+				if _sutehai _in_ _aryPlayerGenbutsu[_i] {
+					_genbutsuPoint += 2000
+					if _i == 0 {//親のリーチは特に避けたい
+						_genbutsuPoint += 1000
+					}
+				}
+			}
+		}
+		_dahaiPoint = _shantenPoint + _machiPoint + _elementMaxPoint + _koritsuPoint + _furitenPoint + _doraPoint + _genbutsuPoint
 		if _point < _dahaiPoint	{
 			_point = _dahaiPoint
 			_arDahai = (IARRAY, _sutehai)
@@ -437,10 +453,18 @@ MJ.GetKakanHaiBest
 	_tsumoHai = _argv[1]
 	_bafuHai = _argv[2]
 	_jifuHai = _argv[3]
+	_aryPlayerRichi = SPLIT(_argv[4], ',')
 	_r = ''
 	if !MJ.CanKakan(_tehai, _tsumoHai) {
 		_r
 		return
+	}
+	//誰かがリーチしていたらカンしない
+	foreach _aryPlayerRichi; _p {
+		if TOINT(_p) {
+			_r
+			return
+		}
 	}
 	_tehaiAddTsumo = MJ.AddHai(_tehai, _tsumoHai)
 	_arKakanHai = MJ.GetKakanHai(_tehaiAddTsumo)
@@ -494,7 +518,43 @@ MJ.ShouldRichi
 	_shanten = _argv[1]
 	_isRichi = _argv[2]
 	_nokori = _argv[3]
-	MJ.CanRichi(_tehai, _shanten, _isRichi, _nokori)
+	_tsumo = _argv[4]
+	_dahai = _argv[5]
+	_strBafuhai = _argv[6]
+	_strJifuhai = _argv[7]
+	_strDorahyouji = _argv[8]
+	if !MJ.CanRichi(_tehai, _shanten, _isRichi, _nokori) {
+		0
+		return
+	}
+	//親ならリーチする
+	if _strJifuhai == '1z' {
+		1
+		return
+	}
+	//待ちが悪い場合は様子を見る
+	_tehaiNew = MJ.RemoveHai(MJ.AddHai(_tehai, _tsumo), _dahai)
+	_arMachi = MJ.GetMachiArray(_tehaiNew)
+	if ARRAYSIZE(_arMachi) < 2 {
+		0
+		return
+	}
+	//役があるならヤミテンでもいいのでは
+	_arDora = IARRAY()
+	_arDorahyouji = MJ.MakeArrayFromString(_strDorahyouji)
+	foreach _arDorahyouji; _d {
+		_arDora ,= MJ.GetDoraFromDorahyouji(_d)
+	}
+	_strDora = JOIN(_arDora, '')
+	_isTsumo = 0
+	foreach _arMachi; _machi {
+		_score = MJ.GetScore(_tehaiNew, _machi, _strBafuhai, _strJifuhai, _strDora, _isTsumo)
+		if _score > 0 {
+			0
+			return
+		}
+	}
+	1
 }
 
 MJ.CanRichi
@@ -521,11 +581,19 @@ MJ.ShouldPon
 	_sutehai = _argv[1]
 	_bafuHai = _argv[2]
 	_jifuHai = _argv[3]
+	_aryPlayerRichi = SPLIT(_argv[4], ',')
+	//誰かがリーチしていたら鳴かない
+	foreach _aryPlayerRichi; _p {
+		if TOINT(_p) {
+			0
+			return
+		}
+	}
 	_h = _sutehai
 	_tehaiNew = MJ.RemoveHai(_tehai, _h + _h) + '<' + _h + _h + _h + '>'
 	_shantenBefore = MJ.GetShantenYaku(_tehai, _bafuHai, _jifuHai)
 	_shantenAfter = MJ.GetShantenYaku(_tehaiNew, _bafuHai, _jifuHai)
-	if _shantenAfter < _shantenBefore {
+	if _shantenAfter < _shantenBefore && _shantenAfter == 0 {//それでテンパイするなら鳴く
 		1
 		return
 	}
@@ -538,14 +606,21 @@ MJ.GetChiMaterialBest
 	_sutehai = _argv[1]
 	_bafuHai = _argv[2]
 	_jifuHai = _argv[3]
-
+	_aryPlayerRichi = SPLIT(_argv[4], ',')
+	//誰かがリーチしていたら鳴かない
+	foreach _aryPlayerRichi; _p {
+		if TOINT(_p) {
+			''
+			return
+		}
+	}
 	_arChi = MJ.GetChiMaterial(_tehai, _sutehai)
 	_shantenBefore = MJ.GetShantenYaku(_tehai, _bafuHai, _jifuHai)
 	_r = IARRAY()
 	foreach _arChi; _c {
 		_tehaiNew = MJ.RemoveHai(_tehai, _c) + '<' + JOIN(MJ.SortHai(MJ.MakeArrayFromString(_c + _sutehai)), '') + '>'
 		_shantenAfter = MJ.GetShantenYaku(_tehaiNew, _bafuHai, _jifuHai)
-		if _shantenAfter < _shantenBefore {
+		if _shantenAfter < _shantenBefore && _shantenAfter == 0 {//それでテンパイするなら鳴く
 			_r ,= _c
 		}
 	}
@@ -629,7 +704,7 @@ MJ.GetScore{
 	_strBafuhai = _argv[2]
 	_strJifuhai = _argv[3]
 	_strDora = _argv[4]
-	_isTsumo = 1
+	_isTsumo = _argv[5]
 	_isRichi = 0
 	_isIppatsu = 0
 	_isChankan = 0

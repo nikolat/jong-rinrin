@@ -4,13 +4,13 @@ ghost/master/dict/notify.txt6f8041295b43756a4b3cf86fa15cc3edsize=0date=2021-0
 ghost/master/dict/resource.txt3fa402d09916b2077dd0eb72ada45ab1size=0date=2021-08-22T19:58:02
 ghost/master/dict/yaya_tmpl_util.txt20f87a5c03324963b29cbc04f4421a18size=0date=2021-08-22T19:58:13
 ghost/master/icon.ico8c525821135617b22c52be6e4bb1a3afsize=0date=2013-11-10T21:42:40
-ghost/master/MahjongAI.txt5c6dd441af9ca7cc2d23eb5ff78a5895size=14904date=2021-08-26T17:42:19
+ghost/master/MahjongAI.txt81bf9c99d31642fb7cebaa22cfc326ddsize=16955date=2021-08-26T22:02:58
 ghost/master/messagetxt/classical-chinese.txt3370196bc4c0ce28d051687278c6cf93size=0date=2021-07-11T04:40:42
 ghost/master/messagetxt/english.txtdcdc7403b13d9b219db541e225671c29size=0date=2021-07-11T20:13:42
 ghost/master/messagetxt/japanese.txt08a459dafe0971a670118c275193931csize=0date=2021-07-11T04:40:42
 ghost/master/messagetxt/simplified-chinese.txt31394698e915b3306400294bafb27128size=0date=2021-07-11T04:40:42
 ghost/master/messagetxt/traditional-chinese.txtdbe54a24c660fd7a9572712dd57135b9size=0date=2021-07-11T04:40:42
-ghost/master/OnMahjong.txt09d618cd689c1f1d0c6aebc7226fc013size=13472date=2021-08-26T17:42:45
+ghost/master/OnMahjong.txt6a484fec75a5745e3c2929f720f101b6size=14882date=2021-08-26T22:24:56
 ghost/master/saori/aqtk/AqLicense.txteadf599be95f6afa75fa50b2295521c0size=0date=2010-04-01T17:36:56
 ghost/master/saori/aqtk/AqTalkSaori.dll3ca3db02a21292ac7fdbbe572f7e4254size=0date=2010-04-02T17:08:22
 ghost/master/saori/aqtk/AqTalkSaori_readme.txt87aa9972151b8ed2b286b7b196291c38size=0date=2010-04-02T17:09:54
@@ -24,7 +24,7 @@ ghost/master/yaya.txt871f805c04f8243e85cabfb256eef465size=0date=2021-08-22T19
 ghost/master/yaya_emerg.txt42e1cae47844758c9402157e26983dd0size=0date=2021-08-22T19:54:31
 ghost/master/yaya_emerg_dic.txt084582ddbe4a4bb23c433607f3d9cf20size=0date=2021-08-22T19:54:51
 install.txt4ce3c2d9e5c430f4b1b30deb3422f53fsize=0date=2021-08-22T19:50:30
-readme.txt452a2a8046de19a5d068c486fd0314b1size=2266date=2021-08-26T17:46:27
+readme.txt452a2a8046de19a5d068c486fd0314b1size=0date=2021-08-26T17:46:27
 shell/master/descript.txt34311b6830129f46506c88c3336a4cf9size=0date=2021-08-22T19:51:21
 shell/master/element0101.png73ff74efb9982b38b42bd3333189331asize=0date=2014-01-09T22:56:42
 shell/master/element0102.png8504f3c46bfc933d871e5377d69b2776size=0date=2014-01-09T22:56:42

@@ -126,6 +126,10 @@ MJ.kyokustart
 	MJ.Save.Jifuhai = MJ.GetJifuhai(reference[3])
 	MJ.Save.Furo.Own = ''
 	MJ.Save.Sutehai = ''
+	MJ.Save.Players = MJ.GetPlayers(reference[3])
+	MJ.Save.Player.Kawa = ('', '', '', '')
+	MJ.Save.Player.Richi = (0, 0, 0, 0)
+	MJ.Save.Player.Genbutsu = ('', '', '', '')
 }
 
 MJ.GetBafuhai
@@ -159,6 +163,29 @@ MJ.GetJifuhai
 	'' + _n + 'z'
 }
 
+//MJ.Save.PlayerNameを東家から並べ直したものを得る
+MJ.GetPlayers
+{
+	_r = IARRAY()
+	_i = 0
+	_findOya = 0
+	while ARRAYSIZE(_r) < 4 {
+		if MJ.Save.PlayerName[_i] == _argv[0] {
+			_findOya = 1
+		}
+		if _findOya {
+			_r ,= MJ.Save.PlayerName[_i]
+		}
+		_i = (_i + 1) % 4
+	}
+	_r
+}
+
+MJ.I
+{
+	ASEARCH(_argv[0], MJ.Save.Players)
+}
+
 //**********************************************************
 // kyokuend 一局終了
 //**********************************************************
@@ -175,6 +202,10 @@ MJ.kyokuend
 	ERASEVAR('MJ.Save.Jifuhai')
 	ERASEVAR('MJ.Save.Furo.Own')
 	ERASEVAR('MJ.Save.Sutehai')
+	ERASEVAR('MJ.Save.Players')
+	ERASEVAR('MJ.Save.Player.Kawa')
+	ERASEVAR('MJ.Save.Player.Richi')
+	ERASEVAR('MJ.Save.Player.Genbutsu')
 }
 
 //**********************************************************
@@ -302,16 +333,22 @@ MJ.tsumo
 //**********************************************************
 MJ.sutehai
 {
-	//自分の捨牌通知のみに反応
-	if reference[2] != MJ.PlayerName() {
-		MJ.Save.Sutehai = reference[3]
+	_playerName = reference[2]
+	_sutehai = reference[3]
+	//誰かリーチしていたら現物を更新
+	for _i = 0; _i < ARRAYSIZE(MJ.Save.Player.Richi); _i++ {
+		if MJ.Save.Player.Richi[_i] {
+			MJ.Save.Player.Genbutsu[_i] += _sutehai
+		}
+	}
+	//他家の捨牌の場合は情報取得に留める
+	if _playerName != MJ.PlayerName() {
+		MJ.Save.Sutehai = _sutehai
+		MJ.Save.Player.Kawa[MJ.I(_playerName)] += _sutehai
 		return
 	}
 	MJ.Save.Sutehai = ''
-
-	_sutehai = reference[3]
 	MJ.Save.Kawa += _sutehai
-
 	//ツモ切りでない
 	if MJ.Save.Tsumo != _sutehai {
 		MJ.Save.Tehai = MJ.AddHai(MJ.Save.Tehai, MJ.Save.Tsumo)
@@ -345,10 +382,11 @@ MJ.sutehai_
 			_dahai = MJ.Save.Tsumo
 		}
 		else {
-			_dahai = MJ.Naniwokiru(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Kawa, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Dorahyouji)
+			_dahai = MJ.Naniwokiru(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Kawa, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Dorahyouji/
+				, JOIN(MJ.Save.Player.Richi, ','), JOIN(MJ.Save.Player.Genbutsu, ','))
 		}
 		_ankanHai = MJ.GetAnkanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Richi, MJ.Save.Bafuhai, MJ.Save.Jifuhai)
-		_kakanHai = MJ.GetKakanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Bafuhai, MJ.Save.Jifuhai)
+		_kakanHai = MJ.GetKakanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Bafuhai, MJ.Save.Jifuhai, JOIN(MJ.Save.Player.Richi, ','))
 	}
 	_action = ''
 	_select = ''
@@ -356,7 +394,7 @@ MJ.sutehai_
 		_action = 'tsumo'
 		_select = ''
 	}
-	elseif MJ.ShouldRichi(MJ.Save.Tehai, _shanten, MJ.Save.Richi, MJ.Save.Nokori) {
+	elseif MJ.ShouldRichi(MJ.Save.Tehai, _shanten, MJ.Save.Richi, MJ.Save.Nokori, MJ.Save.Tsumo, _dahai, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Dorahyouji) {
 		_action = 'richi'
 		_select = _dahai
 	}
@@ -392,19 +430,19 @@ MJ.naku_
 			break
 		}
 		if reference[_i] == 'kan' {
-			if MJ.ShouldDaiminkan(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai) {
+			if MJ.ShouldDaiminkan(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai, JOIN(MJ.Save.Player.Richi, ',')) {
 				_action = 'kan'
 				break
 			}
 		}
 		if reference[_i] == 'pon' {
-			if MJ.ShouldPon(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai) {
+			if MJ.ShouldPon(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai, JOIN(MJ.Save.Player.Richi, ',')) {
 				_action = 'pon'
 				break
 			}
 		}
 		if reference[_i] == 'chi' {
-			_cm = MJ.GetChiMaterialBest(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai)
+			_cm = MJ.GetChiMaterialBest(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai, JOIN(MJ.Save.Player.Richi, ','))
 			if _cm != '' {
 				_am = MJ.MakeArrayFromString(_cm)
 				_action = 'chi'
@@ -438,10 +476,12 @@ MJ.tenpai_
 //**********************************************************
 MJ.say
 {
-	if reference[2] == MJ.PlayerName() {
+	_playerName = reference[2]
+	_word = reference[3]
+	if _playerName == MJ.PlayerName() {
 		_say = ''
 		_aqtk = ''
-		case reference[3] {
+		case _word {
 		when 'chi' {
 			_say = '\s[6]チー'
 			_aqtk = "ち'ー"
@@ -484,10 +524,12 @@ MJ.say
 		void FUNCTIONEX(_dll, 'PLAYASYNC' ,_aqtk)
 	}
 	else {
-		case reference[3] {
+		case _word {
 		when 'richi' {
 			'\0\w9\w9\s[3]ほう…。\_w[2000]\e'
 			'\0\w9\w9\s[2]えっ。\_w[2000]\e'
+			MJ.Save.Player.Richi[MJ.I(_playerName)] = 1
+			MJ.Save.Player.Genbutsu[MJ.I(_playerName)] = MJ.Save.Player.Kawa[MJ.I(_playerName)]
 		}
 		}
 	}
