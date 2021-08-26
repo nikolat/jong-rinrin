@@ -1,7 +1,7 @@
 ========================================================================
 【ソフト名称】雀-リンリン
 【 制 作 者 】Don
-【 動作環境 】Windows10 21H1 + SSP/2.5.16
+【 動作環境 】Windows10 21H1 + SSP/2.5.18
 【 タ イ プ 】「伺か」用ゴースト
 【 取扱種別 】フリーウェア
 【 配布月日 】2014/01/18
@@ -19,6 +19,11 @@
 
     yaya-shiori
       https://github.com/ponapalt/yaya-shiori
+
+□SAORIとして「MahjongUtil.dll」を使用しています。
+
+    すくりや
+      http://nikolat.herokuapp.com/
 
 □SAORIとして「AquesTalkSaori」を使用しています。
 

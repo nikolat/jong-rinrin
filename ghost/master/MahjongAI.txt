@@ -33,7 +33,6 @@ MJ.Naniwokiru
 	foreach _arSutehaiKouho; _sutehai
 	{
 		_strTehaiRemoved = MJ.RemoveHai(_strTehai14, _sutehai)
-		_arMentsuPattern = MJ.GetMentsuPattern(_strTehaiRemoved)
 		_shanten = MJ.GetShantenYaku(_strTehaiRemoved, _strBafuhai, _strJifuhai)
 		_shantenPoint = 10000 * (10 - _shanten)
 		_machiPoint = 0
@@ -49,6 +48,7 @@ MJ.Naniwokiru
 			}
 		}
 		else {
+			_arMentsuPattern = MJ.GetMentsuPattern(_strTehaiRemoved)
 			foreach _arMentsuPattern; _strMentsu {
 				_elementPoint = 0
 				if _strMentsu == "chitoitsu" || _strMentsu == "kokushimusou" {
@@ -60,9 +60,10 @@ MJ.Naniwokiru
 					if _ap[0] != '' {
 						_elementPoint += 40//雀頭
 					}
+					_ap[0] = IARRAY()
 					foreach _ap; _p {
 						if STRLEN(_p) == 6 {
-							elementPoint += 90//面子
+							_elementPoint += 90//面子
 						}
 						elseif STRLEN(_p) == 4 {
 							_arTatsu ,= _p
@@ -385,7 +386,7 @@ MJ.GetAnkanHaiBest
 	''
 }
 
-//本当は四開槓の場合を考慮しないといけない
+//本当は5回目の槓の場合を考慮しないといけない
 MJ.CanAnkan
 {
 	_tehai = _argv[0]
@@ -460,7 +461,7 @@ MJ.GetKakanHaiBest
 	''
 }
 
-//本当は四開槓の場合を考慮しないといけない
+//本当は5回目の槓の場合を考慮しないといけない
 MJ.CanKakan
 {
 	_tehai = _argv[0]

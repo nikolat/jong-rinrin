@@ -124,6 +124,8 @@ MJ.kyokustart
 	MJ.Save.Dorahyouji = ''
 	MJ.Save.Bafuhai = MJ.GetBafuhai(reference[2])
 	MJ.Save.Jifuhai = MJ.GetJifuhai(reference[3])
+	MJ.Save.Furo.Own = ''
+	MJ.Save.Sutehai = ''
 }
 
 MJ.GetBafuhai
@@ -172,6 +174,7 @@ MJ.kyokuend
 	ERASEVAR('MJ.Save.Bafuhai')
 	ERASEVAR('MJ.Save.Jifuhai')
 	ERASEVAR('MJ.Save.Furo.Own')
+	ERASEVAR('MJ.Save.Sutehai')
 }
 
 //**********************************************************
@@ -273,6 +276,7 @@ MJ.open
 		}
 		}
 		MJ.Save.Furo.Own = ''
+		MJ.Save.Sutehai = ''
 	}
 }
 
@@ -303,6 +307,7 @@ MJ.sutehai
 		MJ.Save.Sutehai = reference[3]
 		return
 	}
+	MJ.Save.Sutehai = ''
 
 	_sutehai = reference[3]
 	MJ.Save.Kawa += _sutehai
