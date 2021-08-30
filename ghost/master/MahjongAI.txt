@@ -28,7 +28,7 @@ MJ.Naniwokiru
 	}
 	_strDora = JOIN(_arDora, '')
 	//孤立牌
-	_arKoritsuhai = MJ.GetKoritsuHaiArray(_strTehai14);
+	_arKoritsuhai = MJ.GetKoritsuHaiArray(_strTehai14)
 
 	_arDahai = IARRAY()
 	_point = -1
@@ -158,10 +158,11 @@ MJ.Uniq
 	_ary = _argv
 	_a = IARRAY()
 	for _i = 0; _i < ARRAYSIZE(_ary); _i++ {
-		if (ASEARCH(_ary[_i], _a) == -1)
-			_a ,= _ary[_i];
+		if ASEARCH(_ary[_i], _a) == -1 {
+			_a ,= _ary[_i]
+		}
 	}
-	_a;
+	_a
 }
 
 //孤立牌の探索
@@ -185,8 +186,7 @@ MJ.GetKoritsuHaiArray
 				_arRet ,= _hai[_i]
 			}
 		}
-		elseif (_color == 'z')
-		{
+		elseif _color == 'z' {
 			if ARRAYSIZE(ASEARCHEX(_hai[_i], _hai)) == 1 {
 				_arRet ,= _hai[_i]
 			}
@@ -200,10 +200,10 @@ MJ.AddHai
 {
 	_strHai1 = _argv[0]
 	_strHai2 = _argv[1]
-	_arHai2 = MJ.MakeArrayFromString(_strHai2);
+	_arHai2 = MJ.MakeArrayFromString(_strHai2)
 	_strToAdd = _strHai1
 	for _i = 0; _i < ARRAYSIZE(_arHai2); _i++ {
-		_strAdded = '';
+		_strAdded = ''
 		_isAdded = 0
 		for _j = 0; _j < STRLEN(_strToAdd); _j++ {
 			if SUBSTR(_strToAdd, _j, 1) == '<' {
@@ -272,12 +272,12 @@ MJ.RemoveHai
 			}
 			else {
 				if !_isRemoved && SUBSTR(_strToRemove, _j, 2) == _arHai2[_i] {
-					_isRemoved = 1;
+					_isRemoved = 1
 				}
 				else {
-					_strRemoved += SUBSTR(_strToRemove, _j, 2);
+					_strRemoved += SUBSTR(_strToRemove, _j, 2)
 				}
-				_j++;
+				_j++
 			}
 		}
 		_strToRemove = _strRemoved
