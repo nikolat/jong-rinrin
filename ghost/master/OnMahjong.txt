@@ -124,6 +124,7 @@ MJ.kyokustart
 	MJ.Save.Dorahyouji = ''
 	MJ.Save.Bafuhai = MJ.GetBafuhai(reference[2])
 	MJ.Save.Jifuhai = MJ.GetJifuhai(reference[3])
+	MJ.Save.Kyoku = ASEARCH(reference[3], MJ.Save.PlayerName) + 1
 	MJ.Save.Furo.Own = ''
 	MJ.Save.Sutehai = ''
 	MJ.Save.Players = MJ.GetPlayers(reference[3])
@@ -181,6 +182,13 @@ MJ.GetPlayers
 	_r
 }
 
+//ゲーム開始時席順index
+MJ.B
+{
+	ASEARCH(_argv[0], MJ.Save.PlayerName)
+}
+
+//東家からのindex
 MJ.I
 {
 	ASEARCH(_argv[0], MJ.Save.Players)
@@ -200,6 +208,7 @@ MJ.kyokuend
 	ERASEVAR('MJ.Save.Dorahyouji')
 	ERASEVAR('MJ.Save.Bafuhai')
 	ERASEVAR('MJ.Save.Jifuhai')
+	ERASEVAR('MJ.Save.Kyoku')
 	ERASEVAR('MJ.Save.Furo.Own')
 	ERASEVAR('MJ.Save.Sutehai')
 	ERASEVAR('MJ.Save.Players')
@@ -216,6 +225,12 @@ MJ.kyokuend
 //**********************************************************
 MJ.point
 {
+	if reference[3] == '=' {
+		MJ.Save.Player.Score[MJ.B(reference[2])] = reference[4]
+		//増減のみに反応
+		return
+	}
+
 	//自分の点数通知のみに反応
 	if reference[2] != MJ.PlayerName() {
 		return
@@ -227,11 +242,6 @@ MJ.point
 		return
 	}
 	if !ISVAR('MJ.Save.Status') {
-		return
-	}
-
-	//増減のみに反応
-	if reference[3] == '=' {
 		return
 	}
 
@@ -251,6 +261,19 @@ MJ.point
 	else {
 	}
 	ERASEVAR('MJ.Save.Status')
+}
+
+//1位のとき、2位との差を返す(1位でないとき、1位との差をマイナスで返す)
+MJ.GetLeadPoint
+{
+	_secondScore = -100000
+	for _i = 0; _i < 4; _i++ {
+		if _i == MJ.B(MJ.PlayerName())
+			continue
+		if MJ.Save.Player.Score[_i] > _secondScore
+			_secondScore = MJ.Save.Player.Score[_i]
+	}
+	MJ.Save.Player.Score[MJ.B(MJ.PlayerName())] - _secondScore
 }
 
 //**********************************************************
@@ -465,7 +488,11 @@ MJ.naku_
 //**********************************************************
 MJ.tenpai_
 {
-	_action = 'yes'
+	_action = ''
+	if MJ.ShouldSayTenpai(MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Kyoku, MJ.Save.Richi, MJ.GetLeadPoint())
+		_action = 'yes'
+	else
+		_action = 'no'
 	"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),%(_action)]\e"
 }
 

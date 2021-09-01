@@ -664,6 +664,21 @@ MJ.GetChiMaterial
 	_r
 }
 
+MJ.ShouldSayTenpai
+{
+	_bafuhai = _argv[0]
+	_jifuhai = _argv[1]
+	_kyoku = _argv[2]
+	_isRichi = _argv[3]
+	_lead = _argv[4]
+	//オーラスで東家で未リーチで現在1位で2位との差が4000点より多いならノーテン宣言する
+	if _bafuhai != "2z" || _jifuhai != "1z" || _kyoku != 4 || _isRichi || _lead <= 4000 {
+		1
+		return
+	}
+	0
+}
+
 //**********************************************************
 // SAORIを使用する関数
 //**********************************************************
