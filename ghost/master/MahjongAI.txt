@@ -45,7 +45,7 @@ MJ.Naniwokiru
 			foreach _arMachi; _machi {
 				_isTsumo = 1//ツモった場合を想定
 				_score = MJ.GetScore(_strTehaiRemoved, _machi, _strBafuhai, _strJifuhai, _strDora, _isTsumo)
-				if (_score > 0) {
+				if _score > 0 {
 					_machiPoint += _score
 				}
 			}
@@ -123,7 +123,7 @@ MJ.Naniwokiru
 			}
 		}
 		_dahaiPoint = _shantenPoint + _machiPoint + _elementMaxPoint + _koritsuPoint + _furitenPoint + _doraPoint + _genbutsuPoint
-		if _point < _dahaiPoint	{
+		if _point < _dahaiPoint {
 			_point = _dahaiPoint
 			_arDahai = (IARRAY, _sutehai)
 		}
@@ -713,7 +713,8 @@ MJ.GetMachiArray
 }
 
 //和了点を求める
-MJ.GetScore{
+MJ.GetScore
+{
 	_strTehai = _argv[0]
 	_strAtarihai = _argv[1]
 	_strBafuhai = _argv[2]

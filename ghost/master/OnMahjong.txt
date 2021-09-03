@@ -107,6 +107,7 @@ MJ.gameend
 {
 	'\0\s[0]いい対局だった。\e'
 	ERASEVAR('MJ.Save.PlayerName')
+	ERASEVAR('MJ.Save.Player.Score')
 }
 
 //**********************************************************
@@ -372,7 +373,7 @@ MJ.sutehai
 	}
 	MJ.Save.Sutehai = ''
 	MJ.Save.Kawa += _sutehai
-	//ツモ切りでない
+	//手出し
 	if MJ.Save.Tsumo != _sutehai {
 		MJ.Save.Tehai = MJ.AddHai(MJ.Save.Tehai, MJ.Save.Tsumo)
 		MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _sutehai)
@@ -383,6 +384,7 @@ MJ.sutehai
 		return
 	}
 	ERASEVAR('MJ.Save.Tsumo')
+	//ツモ切り
 	if 'talking' !_in_ status && !RAND(5) {
 		// 他家（ユーザ）に悟られることは自分が不利になること。
 		// でもゴーストにはそれくらいの「可愛らしさ」があってもよい。
