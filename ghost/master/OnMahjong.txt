@@ -74,7 +74,7 @@ MJ.Main
 //**********************************************************
 MJ.hello
 {
-	"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),ump=%(MJ.ump_version()),name=%(MJ.PlayerName())]\e"
+	MJ.SendResponse(reference[1], "ump=%(MJ.ump_version())", "name=%(MJ.PlayerName())")
 }
 MJ.ump_version
 {
@@ -435,10 +435,10 @@ MJ.sutehai_
 		_action = 'sutehai'
 		_select = _dahai
 	}
-	"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),%(_action),%(_select)]\e"
+	MJ.SendResponse(reference[1], _action, _select)
 
 	//コマンドを送らないことでサーバーに対応を委任する
-	//"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),]\e"
+	//MJ.SendResponse(reference[1])
 }
 
 //**********************************************************
@@ -448,21 +448,21 @@ MJ.sutehai_
 //**********************************************************
 MJ.naku_
 {
-	_action = ''
+	_action = (IARRAY(), reference[1])
 	for _i = 2; _i < ARRAYSIZE(reference); _i++ {
 		if reference[_i] == 'ron' {
-			_action = 'ron'
+			_action ,= 'ron'
 			break
 		}
 		if reference[_i] == 'kan' {
 			if MJ.ShouldDaiminkan(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai, JOIN(MJ.Save.Player.Richi, ',')) {
-				_action = 'kan'
+				_action ,= 'kan'
 				break
 			}
 		}
 		if reference[_i] == 'pon' {
 			if MJ.ShouldPon(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai, JOIN(MJ.Save.Player.Richi, ',')) {
-				_action = 'pon'
+				_action ,= 'pon'
 				break
 			}
 		}
@@ -470,19 +470,20 @@ MJ.naku_
 			_cm = MJ.GetChiMaterialBest(MJ.Save.Tehai, MJ.Save.Sutehai, MJ.Save.Bafuhai, MJ.Save.Jifuhai, JOIN(MJ.Save.Player.Richi, ','))
 			if _cm != '' {
 				_am = MJ.MakeArrayFromString(_cm)
-				_action = 'chi'
-				_action += ",%(_am[0]),%(_am[1])"
+				_action ,= 'chi'
+				_action ,= _am[0]
+				_action ,= _am[1]
 				break
 			}
 		}
 	}
-	if _action == '' {
-		_action = 'no'
+	if ARRAYSIZE(_action) == 1 {
+		_action ,= 'no'
 	}
-	"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),%(_action)]\e"
+	MJ.SendResponse(_action)
 
 	//コマンドを送らないことでサーバーに対応を委任する
-	//"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),]\e"
+	//MJ.SendResponse(reference[1])
 }
 
 //**********************************************************
@@ -495,7 +496,10 @@ MJ.tenpai_
 		_action = 'yes'
 	else
 		_action = 'no'
-	"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version()),%(reference[1]),%(_action)]\e"
+	MJ.SendResponse(reference[1], _action)
+
+	//コマンドを送らないことでサーバーに対応を委任する
+	//MJ.SendResponse(reference[1])
 }
 
 //**********************************************************
@@ -581,4 +585,46 @@ MJ.agari
 MJ.ryukyoku
 {
 	MJ.Save.Status = '流局'
+}
+
+//******************************************************************************
+// utility
+//******************************************************************************
+MJ.SendResponse
+{
+	if SHIORI3FW.IsSSTP() {
+		SHIORI3FW.PushAdditionalReturn('X-SSTP-PassThru-ID', MJ.ResponseEventID())
+		SHIORI3FW.PushAdditionalReturn('X-SSTP-PassThru-Reference0', MJ.Version())
+		for _i = 0; _i < _argc; _i++ {
+			SHIORI3FW.PushAdditionalReturn("X-SSTP-PassThru-Reference%(_i + 1)", _argv[_i])
+		}
+	}
+	else {
+		"\![raiseother,%(sender),%(MJ.ResponseEventID()),%(MJ.Version())," + JOIN(_argv, ',') + ']\e'
+	}
+}
+
+SHIORI3FW.PushAdditionalReturn
+{
+	GOYA.PushAdditionalReturn(_argv)
+}
+
+SHIORI3FW.IsSSTP
+{
+	_sendertype = SPLIT(SHIORI3FW.GetHeaderValue('SenderType'), ',')
+	if ASEARCH('sstp', _sendertype) >= 0
+		1
+	else
+		0
+}
+
+SHIORI3FW.GetHeaderValue
+{
+	_header = _argv[0]
+	_index = ASEARCH(_header, var.req.key)
+	if _index == -1 {
+		''
+		return
+	}
+	var.req.value[_index]
 }
