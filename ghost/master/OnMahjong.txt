@@ -127,11 +127,13 @@ MJ.kyokustart
 	MJ.Save.Jifuhai = MJ.GetJifuhai(reference[3])
 	MJ.Save.Kyoku = ASEARCH(reference[3], MJ.Save.PlayerName) + 1
 	MJ.Save.Furo.Own = ''
+	MJ.Save.Furo.Other = ''
 	MJ.Save.Sutehai = ''
 	MJ.Save.Players = MJ.GetPlayers(reference[3])
 	MJ.Save.Player.Kawa = ('', '', '', '')
 	MJ.Save.Player.Richi = (0, 0, 0, 0)
 	MJ.Save.Player.Genbutsu = ('', '', '', '')
+	MJ.Save.VisiblePai = ''
 }
 
 MJ.GetBafuhai
@@ -211,11 +213,13 @@ MJ.kyokuend
 	ERASEVAR('MJ.Save.Jifuhai')
 	ERASEVAR('MJ.Save.Kyoku')
 	ERASEVAR('MJ.Save.Furo.Own')
+	ERASEVAR('MJ.Save.Furo.Other')
 	ERASEVAR('MJ.Save.Sutehai')
 	ERASEVAR('MJ.Save.Players')
 	ERASEVAR('MJ.Save.Player.Kawa')
 	ERASEVAR('MJ.Save.Player.Richi')
 	ERASEVAR('MJ.Save.Player.Genbutsu')
+	ERASEVAR('MJ.Save.VisiblePai')
 }
 
 //**********************************************************
@@ -285,6 +289,7 @@ MJ.GetLeadPoint
 MJ.haipai
 {
 	MJ.Save.Tehai = reference[3]
+	MJ.Save.VisiblePai += reference[3]
 }
 
 //**********************************************************
@@ -294,6 +299,7 @@ MJ.haipai
 MJ.dora
 {
 	MJ.Save.Dorahyouji += reference[2]
+	MJ.Save.VisiblePai += reference[2]
 }
 
 //**********************************************************
@@ -303,14 +309,10 @@ MJ.dora
 //**********************************************************
 MJ.open
 {
+	_h = reference[3]
 	if reference[2] == MJ.PlayerName() {
-		_h = reference[3]
 		case MJ.Save.Furo.Own {
-		when 'chi' {
-			_toRemove = MJ.RemoveHai(_h, MJ.Save.Sutehai)
-			MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _toRemove) + '<' + _h + '>'
-		}
-		when 'pon' {
+		when 'chi','pon' {
 			_toRemove = MJ.RemoveHai(_h, MJ.Save.Sutehai)
 			MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _toRemove) + '<' + _h + '>'
 		}
@@ -333,6 +335,27 @@ MJ.open
 		MJ.Save.Furo.Own = ''
 		MJ.Save.Sutehai = ''
 	}
+	else {
+		case MJ.Save.Furo.Other {
+		when 'chi','pon' {
+			_toAdd = MJ.RemoveHai(_h, MJ.Save.Sutehai)
+			MJ.Save.VisiblePai += _toAdd
+		}
+		when 'kan' {
+			if STRLEN(_h) == 2 {//加槓
+				MJ.Save.VisiblePai += _h
+			}
+			elseif MJ.Save.Sutehai !_in_ _h {//暗槓
+				MJ.Save.VisiblePai += _h
+			}
+			else {//大明槓
+				_toAdd = MJ.RemoveHai(_h, MJ.Save.Sutehai)
+				MJ.Save.VisiblePai += _toAdd
+			}
+		}
+		}
+		MJ.Save.Furo.Other = ''
+	}
 }
 
 //**********************************************************
@@ -345,6 +368,7 @@ MJ.tsumo
 {
 	MJ.Save.Nokori = reference[3]
 	MJ.Save.Tsumo = reference[4]
+	MJ.Save.VisiblePai += reference[4]
 	if 'talking' !_in_ status {
 		'\0\s[0]\e'
 	}
@@ -359,6 +383,7 @@ MJ.sutehai
 {
 	_playerName = reference[2]
 	_sutehai = reference[3]
+	MJ.Save.Sutehai = _sutehai
 	//誰かリーチしていたら現物を更新
 	for _i = 0; _i < ARRAYSIZE(MJ.Save.Player.Richi); _i++ {
 		if MJ.Save.Player.Richi[_i] {
@@ -367,11 +392,10 @@ MJ.sutehai
 	}
 	//他家の捨牌の場合は情報取得に留める
 	if _playerName != MJ.PlayerName() {
-		MJ.Save.Sutehai = _sutehai
 		MJ.Save.Player.Kawa[MJ.I(_playerName)] += _sutehai
+		MJ.Save.VisiblePai += _sutehai
 		return
 	}
-	MJ.Save.Sutehai = ''
 	MJ.Save.Kawa += _sutehai
 	//手出し
 	if MJ.Save.Tsumo != _sutehai {
@@ -408,7 +432,7 @@ MJ.sutehai_
 		}
 		else {
 			_dahai = MJ.Naniwokiru(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Kawa, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Dorahyouji/
-				, JOIN(MJ.Save.Player.Richi, ','), JOIN(MJ.Save.Player.Genbutsu, ','))
+				, JOIN(MJ.Save.Player.Richi, ','), JOIN(MJ.Save.Player.Genbutsu, ','), MJ.Save.VisiblePai)
 			_kakanHai = MJ.GetKakanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Bafuhai, MJ.Save.Jifuhai, JOIN(MJ.Save.Player.Richi, ','))
 		}
 		_ankanHai = MJ.GetAnkanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Richi, MJ.Save.Bafuhai, MJ.Save.Jifuhai)
@@ -558,6 +582,9 @@ MJ.say
 	}
 	else {
 		case _word {
+		when 'chi','pon','kan' {
+			MJ.Save.Furo.Other = _word
+		}
 		when 'richi' {
 			'\0\w9\w9\s[3]ほう…。\e'
 			'\0\w9\w9\s[2]えっ。\e'
@@ -571,8 +598,9 @@ MJ.say
 //**********************************************************
 // agari あがり
 // Reference2: プレイヤー名
-// Reference3: Reserved(符)
-// Reference4: Reserved(役,ハン数)
+// Reference3: 符
+// Reference4: 役,ハン数
+// Reference5: 以降、Reference4同様
 //**********************************************************
 MJ.agari
 {

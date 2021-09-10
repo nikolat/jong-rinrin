@@ -17,6 +17,17 @@ MJ.Naniwokiru
 	_strDorahyouji = _argv[5]
 	_aryPlayerRichi = SPLIT(_argv[6], ',')
 	_aryPlayerGenbutsu = SPLIT(_argv[7], ',')
+	_strVisiblePai = _argv[8]
+
+	_arVisiblePai = MJ.MakeArrayFromString(_strVisiblePai)
+	_arVisibleNum = (/
+		0, 0, 0, 0, 0, 0, 0, 0, 0,/
+		0, 0, 0, 0, 0, 0, 0, 0, 0,/
+		0, 0, 0, 0, 0, 0, 0, 0, 0,/
+		0, 0, 0, 0, 0, 0, 0)
+	foreach _arVisiblePai; _p {
+		_arVisibleNum[MJ.GetSortCode(_p)]++
+	}
 
 	_strTehai14 = MJ.AddHai(_strTehai13, _strTsumo)
 	_arSutehaiKouho = MJ.Uniq(MJ.GetTehaiArrayWithoutFuro(_strTehai14))
@@ -32,8 +43,7 @@ MJ.Naniwokiru
 
 	_arDahai = IARRAY()
 	_point = -1
-	foreach _arSutehaiKouho; _sutehai
-	{
+	foreach _arSutehaiKouho; _sutehai {
 		_strTehaiRemoved = MJ.RemoveHai(_strTehai14, _sutehai)
 		_shanten = MJ.GetShantenYaku(_strTehaiRemoved, _strBafuhai, _strJifuhai)
 		_shantenPoint = 1000 * (10 - _shanten)
@@ -46,7 +56,8 @@ MJ.Naniwokiru
 				_isTsumo = 1//ツモった場合を想定
 				_score = MJ.GetScore(_strTehaiRemoved, _machi, _strBafuhai, _strJifuhai, _strDora, _isTsumo)
 				if _score > 0 {
-					_machiPoint += _score
+					_nNokori = 4 - _arVisibleNum[MJ.GetSortCode(_machi)]
+					_machiPoint += _score * _nNokori
 				}
 			}
 			_shantenPoint += 10000//テンパイを崩してまでオリないこととする
@@ -62,7 +73,8 @@ MJ.Naniwokiru
 					_ap = SPLIT(_strMentsu, ',')
 					_arTatsu = IARRAY()
 					if _ap[0] != '' {
-						_elementPoint += 40//雀頭
+						_nNokori = 4 - _arVisibleNum[MJ.GetSortCode(SUBSTR(_ap[0], 0, 2))]
+						_elementPoint += 20 * _nNokori//雀頭
 					}
 					_ap[0] = IARRAY()
 					foreach _ap; _p {
@@ -76,17 +88,29 @@ MJ.Naniwokiru
 					foreach _arTatsu; _tatsu {
 						_t1 = TOINT(SUBSTR(_tatsu, 0, 1))
 						_t2 = TOINT(SUBSTR(_tatsu, 2, 1))
-						if (_t1 != 1) && (_t1 + 1 == _t2) && (_t2 != 9) {
-							_elementPoint += 60//両面
+						_color = SUBSTR(_tatsu, 1, 1)
+						if (_t1 != 1) && (_t1 + 1 == _t2) && (_t2 != 9) {//両面
+							_nNokori1 = 4 - _arVisibleNum[MJ.GetSortCode(TOSTR(_t1 - 1) + _color)]
+							_nNokori2 = 4 - _arVisibleNum[MJ.GetSortCode(TOSTR(_t2 + 1) + _color)]
+							_elementPoint += 10 * (_nNokori1 + _nNokori2)
 						}
-						elseif _t1 == _t2 {
-							_elementPoint += 40//対子
+						elseif _t1 == _t2 {//対子
+							_nNokori = 4 - _arVisibleNum[MJ.GetSortCode(TOSTR(_t1) + _color)]
+							_elementPoint += 20 * _nNokori
 						}
-						elseif (_t1 == 1) && (_t2 == 2) || (_t1 == 8) && (_t2 == 9) {
-							_elementPoint += 20//辺張
+						elseif (_t1 == 1) && (_t2 == 2) || (_t1 == 8) && (_t2 == 9) {//辺張
+							_nNokori = 0
+							if _t1 == 1 {
+								_nNokori = 4 - _arVisibleNum[MJ.GetSortCode('3' + _color)]
+							}
+							else {
+								_nNokori = 4 - _arVisibleNum[MJ.GetSortCode('7' + _color)]
+							}
+							_elementPoint += 10 * _nNokori - 5
 						}
-						else {
-							_elementPoint += 30//嵌張
+						else {//嵌張
+							_nNokori = 4 - _arVisibleNum[MJ.GetSortCode(TOSTR(_t1 + 1) + _color)]
+							_elementPoint += 10 * _nNokori
 						}
 					}
 				}
