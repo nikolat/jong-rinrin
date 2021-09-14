@@ -105,7 +105,29 @@ MJ.gamestart
 //**********************************************************
 MJ.gameend
 {
-	'\0\s[0]いい対局だった。\e'
+	for _i = 2; _i <= 5; _i++ {
+		_playerName = reference[_i][0, CHR(1)]
+		_score = TOINT(reference[_i][1, CHR(1)])
+		MJ.Save.Player.Score[MJ.B(_playerName)] = _score
+	}
+	_rank_self = MJ.GetRank(MJ.PlayerName())
+	_rank_user = MJ.GetRank('user')
+	if _rank_self == 1 {
+		'\0\s[5]当然の結果だな。\e'
+		'\0\s[0]またいつでも相手になろう。\e'
+	}
+	elseif _rank_user == 1 {
+		'\0\s[1]%usernameは強いのだな…。\e'
+		'\0\s[8]%usernameには敵わんな。\e'
+	}
+	elseif _rank_self == 4 {
+		'\0\s[3]敗因を分析せねば…。\e'
+		'\0\s[4]こんなはずでは…。\e'
+	}
+	else {
+		'\0\s[0]いい対局だった。\e'
+		'\0\s[6]勝負は時の運。\e'
+	}
 	ERASEVAR('MJ.Save.PlayerName')
 	ERASEVAR('MJ.Save.Player.Score')
 }
@@ -251,7 +273,14 @@ MJ.point
 	}
 
 	if reference[3] == '+' {
-		'\0\s[5]ふふっ。\e'
+		if 8000 <= reference[4] {
+			'\0\s[5]ふふっ。\e'
+			'\0\s[8]悪く思うな。\e'
+		}
+		else {
+			'\0\s[6]よし…。\e'
+			'\0\s[6]刻んでいこう。\e'
+		}
 	}
 	elseif reference[3] == '-' {
 		if 8000 <= reference[4] {
@@ -263,15 +292,13 @@ MJ.point
 			'\0\s[7]よくも…。\e'
 		}
 	}
-	else {
-	}
 	ERASEVAR('MJ.Save.Status')
 }
 
 //1位のとき、2位との差を返す(1位でないとき、1位との差をマイナスで返す)
 MJ.GetLeadPoint
 {
-	_secondScore = -100000
+	_secondScore = -1000000
 	for _i = 0; _i < 4; _i++ {
 		if _i == MJ.B(MJ.PlayerName())
 			continue
@@ -279,6 +306,26 @@ MJ.GetLeadPoint
 			_secondScore = MJ.Save.Player.Score[_i]
 	}
 	MJ.Save.Player.Score[MJ.B(MJ.PlayerName())] - _secondScore
+}
+
+//順位を返す
+MJ.GetRank
+{
+	_target = _argv[0]
+	_scores = MJ.Save.Player.Score
+	_rank = IARRAY()
+	while ARRAYSIZE(_rank) < ARRAYSIZE(_scores) {
+		_topScore = -1000000
+		_topIndex = -1
+		for _i = 0; _i < ARRAYSIZE(_scores); _i++ {
+			if _scores[_i] > _topScore && ASEARCH(_i, _rank) == -1 {
+				_topScore = _scores[_i]
+				_topIndex = _i
+			}
+		}
+		_rank ,= _topIndex
+	}
+	ASEARCH(MJ.B(_target), _rank) + 1
 }
 
 //**********************************************************
@@ -588,8 +635,14 @@ MJ.say
 			MJ.Save.Furo.Other = _word
 		}
 		when 'richi' {
-			'\0\w9\w9\s[3]ほう…。\e'
-			'\0\w9\w9\s[2]えっ。\e'
+			if MJ.Save.Richi {
+				'\0\w9\w9\s[8]ずいぶん強気だな。\e'
+				'\0\w9\w9\s[6]受けて立とう。\e'
+			}
+			else {
+				'\0\w9\w9\s[3]ほう…。\e'
+				'\0\w9\w9\s[2]えっ。\e'
+			}
 			MJ.Save.Player.Richi[MJ.I(_playerName)] = 1
 			MJ.Save.Player.Genbutsu[MJ.I(_playerName)] = MJ.Save.Player.Kawa[MJ.I(_playerName)]
 		}
