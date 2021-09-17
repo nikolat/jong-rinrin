@@ -30,7 +30,7 @@ MJ.Naniwokiru
 	}
 
 	_strTehai14 = MJ.AddHai(_strTehai13, _strTsumo)
-	_arSutehaiKouho = MJ.Uniq(MJ.GetTehaiArrayWithoutFuro(_strTehai14))
+	_arSutehaiKouho = UNIQUE(MJ.GetTehaiArrayWithoutFuro(_strTehai14))
 	//ドラ
 	_arDora = IARRAY()
 	_arDorahyouji = MJ.MakeArrayFromString(_strDorahyouji)
@@ -174,19 +174,6 @@ MJ.GetTehaiArrayWithoutFuro
 		_r ,= _h
 	}
 	_r
-}
-
-//配列から重複する要素を除く
-MJ.Uniq
-{
-	_ary = _argv
-	_a = IARRAY()
-	for _i = 0; _i < ARRAYSIZE(_ary); _i++ {
-		if ASEARCH(_ary[_i], _a) == -1 {
-			_a ,= _ary[_i]
-		}
-	}
-	_a
 }
 
 //孤立牌の探索
@@ -463,7 +450,7 @@ MJ.GetAnkanHai
 	_tehai = _argv[0]
 	_arHai = MJ.GetTehaiArrayWithoutFuro(_tehai)
 	_arRet = IARRAY()
-	foreach MJ.Uniq(_arHai); _h {
+	foreach UNIQUE(_arHai); _h {
 		if ARRAYSIZE(ASEARCHEX(_h, _arHai)) >= 4 {
 			_arRet ,= _h
 		}
@@ -528,7 +515,7 @@ MJ.GetKakanHai
 	_tehai = _argv[0]
 	_arHai = MJ.GetTehaiArrayWithoutFuro(_tehai)
 	_arRet = IARRAY()
-	foreach MJ.Uniq(_arHai); _h {
+	foreach UNIQUE(_arHai); _h {
 		if  "<%(_h)%(_h)%(_h)>" _in_ _tehai {
 			_arRet ,= _h
 		}

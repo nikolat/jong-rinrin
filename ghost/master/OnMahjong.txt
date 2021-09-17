@@ -224,7 +224,7 @@ MJ.I
 //**********************************************************
 MJ.kyokuend
 {
-	if 'talking' !_in_ status {
+	if SHIORI3FW.CanTalk() {
 		'\0\s[0]\e'
 	}
 	ERASEVAR('MJ.Save.Tehai')
@@ -416,7 +416,7 @@ MJ.tsumo
 	MJ.Save.Nokori = reference[3]
 	MJ.Save.Tsumo = reference[4]
 	MJ.Save.VisiblePai += reference[4]
-	if 'talking' !_in_ status {
+	if SHIORI3FW.CanTalk() {
 		'\0\s[0]\e'
 	}
 }
@@ -448,7 +448,7 @@ MJ.sutehai
 	if MJ.Save.Tsumo != _sutehai {
 		MJ.Save.Tehai = MJ.AddHai(MJ.Save.Tehai, MJ.Save.Tsumo)
 		MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _sutehai)
-		if 'talking' !_in_ status && !RAND(5) {
+		if SHIORI3FW.CanTalk() && !RAND(5) {
 			'\0\s[5]…。\e'
 		}
 		ERASEVAR('MJ.Save.Tsumo')
@@ -456,7 +456,7 @@ MJ.sutehai
 	}
 	ERASEVAR('MJ.Save.Tsumo')
 	//ツモ切り
-	if 'talking' !_in_ status && !RAND(5) {
+	if SHIORI3FW.CanTalk() && !RAND(5) {
 		// 他家（ユーザ）に悟られることは自分が不利になること。
 		// でもゴーストにはそれくらいの「可愛らしさ」があってもよい。
 		'\0\s[6]…。\e'
@@ -687,11 +687,6 @@ MJ.SendResponse
 	}
 }
 
-SHIORI3FW.PushAdditionalReturn
-{
-	GOYA.PushAdditionalReturn(_argv)
-}
-
 SHIORI3FW.IsSSTP
 {
 	_sendertype = SPLIT(SHIORI3FW.GetHeaderValue('SenderType'), ',')
@@ -710,6 +705,16 @@ SHIORI3FW.GetHeaderValue
 		return
 	}
 	var.req.value[_index]
+}
+
+SHIORI3FW.PushAdditionalReturn
+{
+	GOYA.PushAdditionalReturn(_argv)
+}
+
+SHIORI3FW.CanTalk
+{
+	GOYA.CanTalk()
 }
 
 //**********************************************************
