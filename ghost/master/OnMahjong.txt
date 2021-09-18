@@ -89,10 +89,13 @@ MJ.ump_version
 // Reference5: プレイヤー名3
 // Reference6: プレイヤー名4
 //**********************************************************
-MJ.gamestart
+MJ.gamestart : nonoverlap
 {
 	'\0\s[0]よろしく。\e'
+	'\0\s[5]楽しもうではないか。\e'
+	'\0\s[6]全力で来るがいい。\e'
 	'\0\s[7]いざ勝負！\e'
+	'\0\s[8]手加減はせんぞ。\e'
 	MJ.Save.PlayerName = reference[3,6]
 }
 
@@ -103,7 +106,7 @@ MJ.gamestart
 // Reference4: プレイヤー名3[0x01]点数
 // Reference5: プレイヤー名4[0x01]点数
 //**********************************************************
-MJ.gameend
+MJ.gameend : nonoverlap
 {
 	for _i = 2; _i <= 5; _i++ {
 		_playerName = reference[_i][0, CHR(1)]
@@ -250,7 +253,7 @@ MJ.kyokuend
 // Reference3: (=|+|-) =は点数の直指定、+-は増減を意味する
 // Reference4: 点数
 //**********************************************************
-MJ.point
+MJ.point : nonoverlap
 {
 	if reference[3] == '=' {
 		MJ.Save.Player.Score[MJ.B(reference[2])] = reference[4]
@@ -275,19 +278,27 @@ MJ.point
 	if reference[3] == '+' {
 		if 8000 <= reference[4] {
 			'\0\s[5]ふふっ。\e'
+			'\0\s[5]運が向いてきたな。\e'
+			'\0\s[5]いい流れだ。\e'
 			'\0\s[8]悪く思うな。\e'
 		}
 		else {
+			'\0\s[5]悪くない結果だ。\e'
+			'\0\s[5]調子が上がってきたぞ。\e'
 			'\0\s[6]よし…。\e'
 			'\0\s[6]刻んでいこう。\e'
 		}
 	}
 	elseif reference[3] == '-' {
 		if 8000 <= reference[4] {
+			'\0\s[2]なんだと…。\e'
 			'\0\s[3]ふんっ。\e'
-			'\0\s[4]やるな。\e'
+			'\0\s[4]ありえん…。\e'
+			'\0\s[7]いい気になるなよ。\e'
 		}
 		else {
+			'\0\s[3]調子が悪いな。\e'
+			'\0\s[4]やるな。\e'
 			'\0\s[7]なんてこと…。\e'
 			'\0\s[7]よくも…。\e'
 		}
@@ -578,7 +589,7 @@ MJ.tenpai_
 // Reference2: プレイヤー名
 // Reference3: (chi|pon|kan|ron|tsumo|richi|tenpai|noten)
 //**********************************************************
-MJ.say
+MJ.say : nonoverlap
 {
 	_playerName = reference[2]
 	_word = reference[3]
