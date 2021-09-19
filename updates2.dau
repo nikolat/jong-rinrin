@@ -4,13 +4,13 @@ ghost/master/dict/notify.txt6f8041295b43756a4b3cf86fa15cc3edsize=1088date=202
 ghost/master/dict/resource.txt3fa402d09916b2077dd0eb72ada45ab1size=743date=2021-08-22T19:58:02
 ghost/master/dict/yaya_tmpl_util.txt20f87a5c03324963b29cbc04f4421a18size=5217date=2021-08-22T19:58:13
 ghost/master/icon.ico8c525821135617b22c52be6e4bb1a3afsize=15086date=2013-11-10T21:42:40
-ghost/master/MahjongAI.txtdf88e16d8cc17ea6c7e1776107061f28size=18182date=2021-09-18T07:58:48
+ghost/master/MahjongAI.txtb65378bd2fd478b366e7eeb6be4aa9ffsize=18362date=2021-09-19T19:14:18
 ghost/master/messagetxt/classical-chinese.txt490dfa9c8d7df9438edef8d1ee9efe49size=5028date=2021-08-31T12:27:00
 ghost/master/messagetxt/english.txtfb2a260f56241842d6b2740bbe91846fsize=6922date=2021-08-31T08:22:24
 ghost/master/messagetxt/japanese.txt4f01a6c829c6a9975df53917d8b17f81size=8974date=2021-08-31T08:21:02
 ghost/master/messagetxt/simplified-chinese.txt6e3e7e50502ddb7e943cba4a45477ea5size=6356date=2021-08-31T12:27:08
 ghost/master/messagetxt/traditional-chinese.txt70e1041c09af6b64a6fb7bee64c3513bsize=6339date=2021-08-31T12:27:16
-ghost/master/OnMahjong.txte33ac46e94641f1354f6d34ce34c56b6size=19571date=2021-09-18T11:19:09
+ghost/master/OnMahjong.txtb4fe78055061692b0a5e177e5434264esize=19603date=2021-09-19T19:14:47
 ghost/master/saori/aqtk/AqLicense.txteadf599be95f6afa75fa50b2295521c0size=2792date=2010-04-01T17:36:56
 ghost/master/saori/aqtk/AqTalkSaori.dll3ca3db02a21292ac7fdbbe572f7e4254size=192512date=2010-04-02T17:08:22
 ghost/master/saori/aqtk/AqTalkSaori_readme.txt87aa9972151b8ed2b286b7b196291c38size=5880date=2010-04-02T17:09:54
@@ -18,7 +18,7 @@ ghost/master/saori/aqtk/AquesTalk.dllf97a031451220238b21ada12dd2ba6b7size=1105
 ghost/master/saori/MahjongUtil/license.txte6495a244245de2720db05a580c7fb8dsize=3087date=2021-07-29T20:18:44
 ghost/master/saori/MahjongUtil/MahjongUtil.dll35dd69d234c4aea8a4d4050f2d0ad952size=225792date=2021-08-05T22:00:47
 ghost/master/saori/MahjongUtil/readme.txtf4d130f77eb3bc00fce46a5bbae18f96size=8524date=2021-09-12T07:42:38
-ghost/master/system/yaya_shiori3.dicc0fe0ff67933c23e856b4ef862f87854size=23685date=2021-09-18T07:55:42
+ghost/master/system/yaya_shiori3.dic5db889966f86df46e2ef4bb762974b15size=23679date=2021-09-19T19:03:50
 ghost/master/yaya.dll7eb29cc1fea2d8a411f0780b0e1c3163size=1187840date=2021-08-31T10:27:12
 ghost/master/yaya.txt871f805c04f8243e85cabfb256eef465size=2267date=2021-09-09T19:14:05
 ghost/master/yaya_emerg.txt42e1cae47844758c9402157e26983dd0size=1054date=2021-08-22T19:54:31
