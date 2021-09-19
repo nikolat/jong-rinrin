@@ -386,7 +386,8 @@ MJ.GetAnkanHaiBest
 	_isRichi = _argv[2]
 	_bafuHai = _argv[3]
 	_jifuHai = _argv[4]
-	if !MJ.CanAnkan(_tehai, _tsumoHai, _isRichi) {
+	_nokori = _argv[5]
+	if !MJ.CanAnkan(_tehai, _tsumoHai, _isRichi, _nokori) {
 		''
 		return
 	}
@@ -419,7 +420,12 @@ MJ.CanAnkan
 	_tehai = _argv[0]
 	_tsumoHai = _argv[1]
 	_isRichi = _argv[2]
+	_nokori = _argv[3]
 
+	if _nokori == 0 {
+		0
+		return
+	}
 	_arAnkanHai = MJ.GetAnkanHai(MJ.AddHai(_tehai, _tsumoHai))
 	if ARRAYSIZE(_arAnkanHai) == 0 {
 		0
@@ -464,9 +470,10 @@ MJ.GetKakanHaiBest
 	_tsumoHai = _argv[1]
 	_bafuHai = _argv[2]
 	_jifuHai = _argv[3]
-	_aryPlayerRichi = SPLIT(_argv[4], ',')
+	_nokori = _argv[4]
+	_aryPlayerRichi = SPLIT(_argv[5], ',')
 	_r = ''
-	if !MJ.CanKakan(_tehai, _tsumoHai) {
+	if !MJ.CanKakan(_tehai, _tsumoHai, _nokori) {
 		_r
 		return
 	}
@@ -501,7 +508,12 @@ MJ.CanKakan
 {
 	_tehai = _argv[0]
 	_tsumoHai = _argv[1]
+	_nokori = _argv[2]
 
+	if _nokori == 0 {
+		0
+		return
+	}
 	_arKakanHai = MJ.GetKakanHai(MJ.AddHai(_tehai, _tsumoHai))
 	if ARRAYSIZE(_arKakanHai) == 0 {
 		0

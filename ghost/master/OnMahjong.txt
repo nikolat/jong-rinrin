@@ -491,9 +491,9 @@ MJ.sutehai_
 		else {
 			_dahai = MJ.Naniwokiru(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Kawa, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Dorahyouji/
 				, JOIN(MJ.Save.Player.Richi, ','), JOIN(MJ.Save.Player.Genbutsu, ','), MJ.Save.VisiblePai)
-			_kakanHai = MJ.GetKakanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Bafuhai, MJ.Save.Jifuhai, JOIN(MJ.Save.Player.Richi, ','))
+			_kakanHai = MJ.GetKakanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Nokori, JOIN(MJ.Save.Player.Richi, ','))
 		}
-		_ankanHai = MJ.GetAnkanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Richi, MJ.Save.Bafuhai, MJ.Save.Jifuhai)
+		_ankanHai = MJ.GetAnkanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Richi, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Nokori)
 	}
 	_action = ''
 	_select = ''
