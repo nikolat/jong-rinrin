@@ -76,7 +76,7 @@ request
 			// ハンドラが無い場合は即返る
 			if !GOYA.IsImportantEvent(_id) {
 				if !ISFUNC(GOYA.MakeEventHandler(_id,_command)) {
-					GOYA.MakeEmptyResponse(_id)
+					GOYA.MakeEmptyResponse(_id) + C_CRLF
 					return
 				}
 			}
@@ -295,7 +295,7 @@ GOYA.MakeEmptyResponse
 			Value: \0\-\e%(C_CRLF2)"
 	others
 		// 上記以外では204を返送して良い
-		"SHIORI/3.0 204 No Content%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF2)"
+		"SHIORI/3.0 204 No Content%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF)"
 	}
 }
 
