@@ -403,7 +403,7 @@ MJ.GetAnkanHaiBest
 //	foreach _arAnkanHai; _h {
 //		_strTehai = MJ.RemoveHai(_tehaiAddTsumo, "%(_h)%(_h)%(_h)%(_h)") + "(%(_h)%(_h)%(_h)%(_h))"
 //		_shantenAfter = MJ.GetShantenYaku(_strTehai, _bafuHai, _jifuHai)
-//		if (_shantenBefore >= _shantenAfter)
+//		if _shantenAfter != '' && _shantenAfter <= _shantenBefore
 //			_arAnkanHaiUseful ,= _h
 //	}
 //	_n = ARRAYSIZE(_arAnkanHaiUseful)
@@ -492,7 +492,7 @@ MJ.GetKakanHaiBest
 		_strTehai = REPLACE(_tehaiAddTsumo, "<%(_h)%(_h)%(_h)>", "<%(_h)%(_h)%(_h)%(_h)>", 1)
 		_strTehai = MJ.RemoveHai(_strTehai, _h)
 		_shantenAfter = MJ.GetShantenYaku(_strTehai, _bafuHai, _jifuHai)
-		if (_shantenBefore >= _shantenAfter)
+		if _shantenAfter != '' && _shantenAfter <= _shantenBefore
 			_arKakanHaiUseful ,= _h
 	}
 	_n = ARRAYSIZE(_arKakanHaiUseful)
