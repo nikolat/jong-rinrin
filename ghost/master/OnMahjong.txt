@@ -455,23 +455,30 @@ MJ.sutehai
 		return
 	}
 	MJ.Save.Kawa += _sutehai
-	//手出し
-	if MJ.Save.Tsumo != _sutehai {
+
+	_res = ''
+	if !ISVAR('MJ.Save.Tsumo') {
+		//副露後
+		MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _sutehai)
+	}
+	elseif MJ.Save.Tsumo == _sutehai {
+		//ツモ切り
+		if SHIORI3FW.CanTalk() && !RAND(5) {
+			_res = '\0\s[6]…。\e'
+		}
+	}
+	else {
+		//手出し
 		MJ.Save.Tehai = MJ.AddHai(MJ.Save.Tehai, MJ.Save.Tsumo)
 		MJ.Save.Tehai = MJ.RemoveHai(MJ.Save.Tehai, _sutehai)
 		if SHIORI3FW.CanTalk() && !RAND(5) {
-			'\0\s[5]…。\e'
+			_res = '\0\s[5]…。\e'
 		}
-		ERASEVAR('MJ.Save.Tsumo')
-		return
 	}
+	// 他家（ユーザ）に悟られることは自分が不利になること。
+	// でもゴーストにはそれくらいの「可愛らしさ」があってもよい。
+	_res
 	ERASEVAR('MJ.Save.Tsumo')
-	//ツモ切り
-	if SHIORI3FW.CanTalk() && !RAND(5) {
-		// 他家（ユーザ）に悟られることは自分が不利になること。
-		// でもゴーストにはそれくらいの「可愛らしさ」があってもよい。
-		'\0\s[6]…。\e'
-	}
 }
 
 //**********************************************************
