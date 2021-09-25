@@ -145,9 +145,12 @@ MJ.gameend : nonoverlap
 MJ.kyokustart
 {
 	'\0\s[0]\e'
+	MJ.kyokuinit()
+	MJ.Save.Status = ''
 	MJ.Save.Kawa = ''
 	MJ.Save.Richi = 0
 	MJ.Save.Dorahyouji = ''
+	MJ.Save.Uradorahyouji = ''
 	MJ.Save.Bafuhai = MJ.GetBafuhai(reference[2])
 	MJ.Save.Jifuhai = MJ.GetJifuhai(reference[3])
 	MJ.Save.Kyoku = ASEARCH(reference[3], MJ.Save.PlayerName) + 1
@@ -159,6 +162,28 @@ MJ.kyokustart
 	MJ.Save.Player.Richi = (0, 0, 0, 0)
 	MJ.Save.Player.Genbutsu = ('', '', '', '')
 	MJ.Save.VisiblePai = ''
+}
+
+MJ.kyokuinit
+{
+	ERASEVAR('MJ.Save.Status')
+	ERASEVAR('MJ.Save.Tehai')
+	ERASEVAR('MJ.Save.Tsumo')
+	ERASEVAR('MJ.Save.Kawa')
+	ERASEVAR('MJ.Save.Richi')
+	ERASEVAR('MJ.Save.Dorahyouji')
+	ERASEVAR('MJ.Save.Uradorahyouji')
+	ERASEVAR('MJ.Save.Bafuhai')
+	ERASEVAR('MJ.Save.Jifuhai')
+	ERASEVAR('MJ.Save.Kyoku')
+	ERASEVAR('MJ.Save.Furo.Own')
+	ERASEVAR('MJ.Save.Furo.Other')
+	ERASEVAR('MJ.Save.Sutehai')
+	ERASEVAR('MJ.Save.Players')
+	ERASEVAR('MJ.Save.Player.Kawa')
+	ERASEVAR('MJ.Save.Player.Richi')
+	ERASEVAR('MJ.Save.Player.Genbutsu')
+	ERASEVAR('MJ.Save.VisiblePai')
 }
 
 MJ.GetBafuhai
@@ -230,21 +255,7 @@ MJ.kyokuend
 	if SHIORI3FW.CanTalk() {
 		'\0\s[0]\e'
 	}
-	ERASEVAR('MJ.Save.Tehai')
-	ERASEVAR('MJ.Save.Kawa')
-	ERASEVAR('MJ.Save.Richi')
-	ERASEVAR('MJ.Save.Dorahyouji')
-	ERASEVAR('MJ.Save.Bafuhai')
-	ERASEVAR('MJ.Save.Jifuhai')
-	ERASEVAR('MJ.Save.Kyoku')
-	ERASEVAR('MJ.Save.Furo.Own')
-	ERASEVAR('MJ.Save.Furo.Other')
-	ERASEVAR('MJ.Save.Sutehai')
-	ERASEVAR('MJ.Save.Players')
-	ERASEVAR('MJ.Save.Player.Kawa')
-	ERASEVAR('MJ.Save.Player.Richi')
-	ERASEVAR('MJ.Save.Player.Genbutsu')
-	ERASEVAR('MJ.Save.VisiblePai')
+	MJ.kyokuinit()
 }
 
 //**********************************************************
@@ -267,11 +278,7 @@ MJ.point : nonoverlap
 	}
 
 	//流局では一々喋らない
-	if ISVAR('MJ.Save.Status') && MJ.Save.Status == '流局' {
-		ERASEVAR('MJ.Save.Status')
-		return
-	}
-	if !ISVAR('MJ.Save.Status') {
+	if MJ.Save.Status == '流局' {
 		return
 	}
 
@@ -303,7 +310,6 @@ MJ.point : nonoverlap
 			'\0\s[7]よくも…。\e'
 		}
 	}
-	ERASEVAR('MJ.Save.Status')
 }
 
 //1位のとき、2位との差を返す(1位でないとき、1位との差をマイナスで返す)
@@ -356,8 +362,13 @@ MJ.haipai
 //**********************************************************
 MJ.dora
 {
-	MJ.Save.Dorahyouji += reference[2]
-	MJ.Save.VisiblePai += reference[2]
+	if MJ.Save.Status == '和了' {
+		MJ.Save.Uradorahyouji += reference[2]
+	}
+	else {
+		MJ.Save.Dorahyouji += reference[2]
+		MJ.Save.VisiblePai += reference[2]
+	}
 }
 
 //**********************************************************

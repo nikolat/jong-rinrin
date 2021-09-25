@@ -72,16 +72,16 @@ MJ.Naniwokiru
 				else {
 					_ap = SPLIT(_strMentsu, ',')
 					_arTatsu = IARRAY()
-					if _ap[0] != '' {
+					if _ap[0] != '' {//雀頭
 						_nNokori = 4 - _arVisibleNum[MJ.GetSortCode(SUBSTR(_ap[0], 0, 2))]
-						_elementPoint += 20 * _nNokori//雀頭
+						_elementPoint += 20 * _nNokori
 					}
 					_ap[0] = IARRAY()
 					foreach _ap; _p {
-						if STRLEN(_p) == 6 {
-							_elementPoint += 90//面子
+						if STRLEN(_p) == 6 {//面子
+							_elementPoint += 90
 						}
-						elseif STRLEN(_p) == 4 {
+						elseif STRLEN(_p) == 4 {//塔子・対子
 							_arTatsu ,= _p
 						}
 					}
