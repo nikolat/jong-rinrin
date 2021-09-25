@@ -497,41 +497,49 @@ MJ.sutehai
 //**********************************************************
 MJ.sutehai_
 {
-	_shanten = MJ.GetShantenYaku(MJ.AddHai(MJ.Save.Tehai, MJ.Save.Tsumo), MJ.Save.Bafuhai, MJ.Save.Jifuhai)
-	_dahai = ''
-	_ankanHai = ''
-	_kakanHai = ''
-	if _shanten >= 0 {
-		if MJ.Save.Richi {
-			//リーチ済ならツモ切り
-			_dahai = MJ.Save.Tsumo
-		}
-		else {
-			_dahai = MJ.Naniwokiru(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Kawa, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Dorahyouji/
-				, JOIN(MJ.Save.Player.Richi, ','), JOIN(MJ.Save.Player.Genbutsu, ','), MJ.Save.VisiblePai)
-			_kakanHai = MJ.GetKakanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Nokori, JOIN(MJ.Save.Player.Richi, ','))
-		}
-		_ankanHai = MJ.GetAnkanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Richi, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Nokori)
-	}
 	_action = ''
 	_select = ''
-	if _shanten == -1 {
-		_action = 'tsumo'
-		_select = ''
+	if ISVAR('MJ.Save.Tsumo') {
+		_shanten = MJ.GetShantenYaku(MJ.AddHai(MJ.Save.Tehai, MJ.Save.Tsumo), MJ.Save.Bafuhai, MJ.Save.Jifuhai)
+		_dahai = ''
+		_ankanHai = ''
+		_kakanHai = ''
+		if _shanten >= 0 {
+			if MJ.Save.Richi {
+				//リーチ済ならツモ切り
+				_dahai = MJ.Save.Tsumo
+			}
+			else {
+				_dahai = MJ.Naniwokiru(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Kawa, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Dorahyouji/
+					, JOIN(MJ.Save.Player.Richi, ','), JOIN(MJ.Save.Player.Genbutsu, ','), MJ.Save.VisiblePai)
+				_kakanHai = MJ.GetKakanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Nokori, JOIN(MJ.Save.Player.Richi, ','))
+			}
+			_ankanHai = MJ.GetAnkanHaiBest(MJ.Save.Tehai, MJ.Save.Tsumo, MJ.Save.Richi, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Nokori)
+		}
+		if _shanten == -1 {
+			_action = 'tsumo'
+			_select = ''
+		}
+		elseif MJ.ShouldRichi(MJ.Save.Tehai, _shanten, MJ.Save.Richi, MJ.Save.Nokori, MJ.Save.Tsumo, _dahai, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Dorahyouji) {
+			_action = 'richi'
+			_select = _dahai
+		}
+		elseif _ankanHai != '' {
+			_action = 'ankan'
+			_select = _ankanHai
+		}
+		elseif _kakanHai != '' {
+			_action = 'kakan'
+			_select = _kakanHai
+		}
+		else {
+			_action = 'sutehai'
+			_select = _dahai
+		}
 	}
-	elseif MJ.ShouldRichi(MJ.Save.Tehai, _shanten, MJ.Save.Richi, MJ.Save.Nokori, MJ.Save.Tsumo, _dahai, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Dorahyouji) {
-		_action = 'richi'
-		_select = _dahai
-	}
-	elseif _ankanHai != '' {
-		_action = 'ankan'
-		_select = _ankanHai
-	}
-	elseif _kakanHai != '' {
-		_action = 'kakan'
-		_select = _kakanHai
-	}
-	else {
+	else {//副露後
+		_dahai = MJ.Naniwokiru(MJ.Save.Tehai, '', MJ.Save.Kawa, MJ.Save.Bafuhai, MJ.Save.Jifuhai, MJ.Save.Dorahyouji/
+			, JOIN(MJ.Save.Player.Richi, ','), JOIN(MJ.Save.Player.Genbutsu, ','), MJ.Save.VisiblePai)
 		_action = 'sutehai'
 		_select = _dahai
 	}
