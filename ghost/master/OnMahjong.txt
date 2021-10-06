@@ -29,7 +29,7 @@ MJ.PlayerName
 
 //**********************************************************
 // ID: OnMahjong
-// Reference0: バージョン(UKAJONG/0.1)
+// Reference0: バージョン(UKAJONG/0.2)
 // Reference1: サーバコマンド(gamestart|gameend|...)
 // Reference2以降: サーバコマンド追加情報
 //**********************************************************
@@ -214,7 +214,7 @@ MJ.GetJifuhai
 		}
 	}
 	_n = (4 + _self - _oya) % 4 + 1
-	'' + _n + 'z'
+	TOSTR(_n) + 'z'
 }
 
 //MJ.Save.PlayerNameを東家から並べ直したものを得る
