@@ -195,7 +195,7 @@ MJ.GetBafuhai
 	when '南' {
 		'2z'
 	}
-	else {
+	others {
 		''
 	}
 	}

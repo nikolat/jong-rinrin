@@ -384,8 +384,8 @@ MJ.GetAnkanHaiBest
 	_tehai = _argv[0]
 	_tsumoHai = _argv[1]
 	_isRichi = _argv[2]
-	_bafuHai = _argv[3]
-	_jifuHai = _argv[4]
+//	_bafuHai = _argv[3]
+//	_jifuHai = _argv[4]
 	_nokori = _argv[5]
 	if !MJ.CanAnkan(_tehai, _tsumoHai, _isRichi, _nokori) {
 		''
@@ -721,7 +721,7 @@ MJ.GetMentsuPattern
 {
 	_strTehai = _argv[0]
 	_dll = 'saori/MahjongUtil/MahjongUtil.dll'
-	_shanten = FUNCTIONEX(_dll, 'shanten' ,_strTehai)
+	void FUNCTIONEX(_dll, 'shanten' ,_strTehai)
 	_mentsuPattern = valueex
 	_mentsuPattern
 }
