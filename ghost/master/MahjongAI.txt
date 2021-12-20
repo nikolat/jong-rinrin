@@ -30,7 +30,7 @@ MJ.Naniwokiru
 	}
 
 	_strTehai14 = MJ.AddHai(_strTehai13, _strTsumo)
-	_arSutehaiKouho = UNIQUE(MJ.GetTehaiArrayWithoutFuro(_strTehai14))
+	_arSutehaiKouho = ARRAYDEDUP(MJ.GetTehaiArrayWithoutFuro(_strTehai14))
 	//ドラ
 	_arDora = IARRAY()
 	_arDorahyouji = MJ.MakeArrayFromString(_strDorahyouji)
@@ -456,7 +456,7 @@ MJ.GetAnkanHai
 	_tehai = _argv[0]
 	_arHai = MJ.GetTehaiArrayWithoutFuro(_tehai)
 	_arRet = IARRAY()
-	foreach UNIQUE(_arHai); _h {
+	foreach ARRAYDEDUP(_arHai); _h {
 		if ARRAYSIZE(ASEARCHEX(_h, _arHai)) >= 4 {
 			_arRet ,= _h
 		}
@@ -527,7 +527,7 @@ MJ.GetKakanHai
 	_tehai = _argv[0]
 	_arHai = MJ.GetTehaiArrayWithoutFuro(_tehai)
 	_arRet = IARRAY()
-	foreach UNIQUE(_arHai); _h {
+	foreach ARRAYDEDUP(_arHai); _h {
 		if  "<%(_h)%(_h)%(_h)>" _in_ _tehai {
 			_arRet ,= _h
 		}
