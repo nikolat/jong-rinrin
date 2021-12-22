@@ -88,8 +88,9 @@ request
 				return
 			}
 		}
-		// Sender取得
+		// ベースウェア名取得
 		elseif _key == 'Sender' {
+			basewarename = _value
 			sender = _value
 		}
 		// Status取得
@@ -136,9 +137,6 @@ GOYA.OnSystemLoad.GOYA.CORE
 	// 時系列変数
 	ghostboottime = systemuptime()
 
-	// ランダムトーク用変数
-	GOYA.AiTalkCount = 0
-
 	// SAORI用変数
 	SAORI.DllList  = IARRAY
 	valueex        = IARRAY
@@ -167,9 +165,6 @@ GOYA.OnSystemUnload.GOYA.CORE
 
 	// 時系列変数
 	ERASEVAR('ghostboottime')
-
-	// ランダムトーク用変数
-	ERASEVAR('GOYA.AiTalkCount')
 
 	// SAORI用変数
 	ERASEVAR('SAORI.DllList')
@@ -322,10 +317,6 @@ GOYA.RaiseIDEvent
 	_event = _argv[0]
 	
 	case _event {
-		when 'OnSecondChange' {
-			// OnSecondChangeならランダムトーク関連処理
-			GOYA.ControlAiTalk(&_event)
-		}
 		when 'OnUpdateReady' {
 			// OnUpdateReadyならロード中のSAORIをすべてunloadする
 			GOYA.SaoriUnloadAll()
@@ -461,25 +452,6 @@ GOYA.AssembleReferenceHeader
 		ERASEVAR('marker')
 	}
 	_result
-}
-
-//------------------------------------------------------------------------------
-//関数名：GOYA.ControlAiTalk
-//機能　：AIトーク発動処理
-//引数　：_argv[0] イベント名
-//------------------------------------------------------------------------------
-GOYA.ControlAiTalk
-{
-	if TOINT(reference[3]) { //喋れる
-		if aitalkinterval > 0 {		// トーク間隔が非0
-			GOYA.AiTalkCount++
-
-			if GOYA.AiTalkCount > aitalkinterval {	// トーク間隔の設定時間を越えた
-				GOYA.AiTalkCount = 0
-				_argv[0] = 'event.OnAiTalk'
-			}
-		}
-	}
 }
 
 //******************************************************************************
@@ -806,29 +778,19 @@ systemuptime
 		(_highcount*0x40000000 + (GETTICKCOUNT/2))/500
 }
 
-systemupsecond    { SHIORI3FW.GetTickInfo[3] }
-systemupminute    { SHIORI3FW.GetTickInfo[1] }
-systemuphour      { SHIORI3FW.GetTickInfo[2] }
+systemupsecond    { GOYA.GetTickInfo[3] }
+systemupminute    { GOYA.GetTickInfo[1] }
+systemuphour      { GOYA.GetTickInfo[2] }
 
-SHIORI3FW.GetTickInfo
+GOYA.GetTickInfo
 {
-	_result     = (IARRAY, systemuptime)
+	_result     = (IARRAY, systemuptime())
 	_result    ,= _result[0]/60
 	_result    ,= _result[1]/60
 	_result    ,= _result[0] - _result[1]*60
 	_result[1] -= _result[2]*60
 
 	_result
-}
-
-ghostupmin
-{
-	(GETSECCOUNT() / 60) - ghostbootmin
-}
-
-ghostupmin_total
-{
-	ghostupmin_last + ghostupmin()
 }
 
 //******************************************************************************
