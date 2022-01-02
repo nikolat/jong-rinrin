@@ -713,10 +713,10 @@ MJ.ryukyoku
 MJ.SendResponse
 {
 	if SHIORI3FW.IsSSTP() {
-		SHIORI3FW.PushAdditionalReturn('X-SSTP-PassThru-ID', MJ.ResponseEventID())
-		SHIORI3FW.PushAdditionalReturn('X-SSTP-PassThru-Reference0', MJ.Version())
+		SHIORI3FW.Push_X_SSTP_PassThru('ID', MJ.ResponseEventID())
+		SHIORI3FW.Push_X_SSTP_PassThru('Reference0', MJ.Version())
 		for _i = 0; _i < _argc; _i++ {
-			SHIORI3FW.PushAdditionalReturn("X-SSTP-PassThru-Reference%(_i + 1)", _argv[_i])
+			SHIORI3FW.Push_X_SSTP_PassThru("Reference%(_i + 1)", _argv[_i])
 		}
 	}
 	else {
