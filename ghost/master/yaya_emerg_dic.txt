@@ -9,15 +9,15 @@
 //
 //******************************************************************************
 
-event.OnBoot
+OnBoot
 {
 	'\0\s[0]\1\s[-1]\0致命的エラー発生\e'
 }
-event.OnMouseDoubleClick
+OnMouseDoubleClick
 {
-	event.OnBoot()
+	OnBoot()
 }
-event.OnKeyPress
+OnKeyPress
 {
 	if ISFUNC('sys.key.' + reference[0]) {
 		EVAL('sys.key.' + reference[0])
@@ -27,7 +27,7 @@ sys.key.r
 {
 	'\![reload,shiori]\0\s[0]\_qReloaded.\_q\e'
 }
-resource.homeurl
+On_homeurl
 {
 	'https://raw.githubusercontent.com/nikolat/jong-rinrin/main/'
 }

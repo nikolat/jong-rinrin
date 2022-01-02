@@ -1,13 +1,13 @@
 //******************************************************************************
 //YAYA　ゴーストテンプレート メニュー処理辞書
 //******************************************************************************
-GOYA.OnSystemLoad.AYATEMPLATE
+OnSystemLoad.AYATEMPLATE
 {
 	AYATEMPLATE.stroke      = IARRAY
 	AYATEMPLATE.strokeid    = IARRAY
 	AYATEMPLATE.stroketimer = IARRAY
 }
-GOYA.OnSystemUnload.AYATEMPLATE
+OnSystemUnload.AYATEMPLATE
 {
 	ERASEVAR('AYATEMPLATE.stroke')
 	ERASEVAR('AYATEMPLATE.strokeid')

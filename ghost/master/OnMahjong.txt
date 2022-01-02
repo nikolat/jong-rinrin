@@ -744,16 +744,6 @@ SHIORI3FW.GetHeaderValue
 	var.req.value[_index]
 }
 
-SHIORI3FW.PushAdditionalReturn
-{
-	GOYA.PushAdditionalReturn(_argv)
-}
-
-SHIORI3FW.CanTalk
-{
-	GOYA.CanTalk()
-}
-
 //**********************************************************
 // Sound
 //**********************************************************

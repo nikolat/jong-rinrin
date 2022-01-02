@@ -1,19 +1,19 @@
 //******************************************************************************
 // network update
 //******************************************************************************
-resource.homeurl    { 'https://raw.githubusercontent.com/nikolat/jong-rinrin/main/' }
-resource.useorigin1 { 1 }
+On_homeurl    { 'https://raw.githubusercontent.com/nikolat/jong-rinrin/main/' }
+On_useorigin1 { 1 }
 
 //******************************************************************************
 // recommend sites
 //******************************************************************************
-resource.sakura.portalsites
+On_sakura.portalsites
 {
 	"/
 		Disc-2%(CHR(1))http://disc2.s56.xrea.com/%(CHR(1))%(CHR(1))%(CHR(2))/
 	"
 }
-resource.sakura.recommendsites
+On_sakura.recommendsites
 {
 	"/
 		yaya-shiori%(CHR(1))https://github.com/ponapalt/yaya-shiori/wiki%(CHR(1))%(CHR(1))%(CHR(2))/

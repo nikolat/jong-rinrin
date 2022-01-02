@@ -1,13 +1,13 @@
 //******************************************************************************
 // initializing global variable
 //******************************************************************************
-GOYA.OnSystemLoad.NOTIFY.EVENT
+OnSystemLoad.NOTIFY.EVENT
 {
 	sakura.name  = ''
 	ghostexlist  = IARRAY
 	ghostexcount = 0
 }
-GOYA.OnSystemUnload.NOTIFY.EVENT
+OnSystemUnload.NOTIFY.EVENT
 {
 	ERASEVAR('sakura.name')
 	ERASEVAR('ghostexlist')
@@ -17,7 +17,7 @@ GOYA.OnSystemUnload.NOTIFY.EVENT
 //******************************************************************************
 // self info
 //******************************************************************************
-notify.OnNotifySelfInfo
+OnNotifySelfInfo : void
 {
 	sakura.name = reference[1]
 }
@@ -25,7 +25,7 @@ notify.OnNotifySelfInfo
 //******************************************************************************
 // other ghost booting info
 //******************************************************************************
-notify.otherghostname
+On_otherghostname : void
 {
 	ghostexlist  = IARRAY
 	foreach reference; _ref { ghostexlist ,= _ref[0,CHR(0x1)] }

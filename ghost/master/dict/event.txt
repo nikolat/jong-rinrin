@@ -1,11 +1,11 @@
 //******************************************************************************
 // required event
 //******************************************************************************
-event.OnFirstBoot          { '\1\s[10]\0\s[0]よろしく。\e' }
-event.OnShellChanged       { '\1\s[10]\0\s[0]待たせたな。\e' }
-event.OnWindowStateRestore { '\1\s[10]\0\s[0]\e' }
-event.OnGhostChanged       { event.OnBoot() }
-event.OnBoot
+OnFirstBoot          { '\1\s[10]\0\s[0]よろしく。\e' }
+OnShellChanged       { '\1\s[10]\0\s[0]待たせたな。\e' }
+OnWindowStateRestore { '\1\s[10]\0\s[0]\e' }
+OnGhostChanged       { OnBoot() }
+OnBoot
 {
 	'\1\s[10]\0\s[0]呼んだか？'
 	'\1\s[10]\0\s[5]退屈していたところだ。'
@@ -14,7 +14,7 @@ event.OnBoot
 	--
 	'\e'
 }
-event.OnClose
+OnClose
 {
 	'\1\s[10]\0\s[0]またな。'
 	'\1\s[10]\0\s[6]もっと腕を磨いてこい。'
@@ -27,10 +27,10 @@ event.OnClose
 //******************************************************************************
 // update event
 //******************************************************************************
-event.OnUpdateBegin        { '\0\s[0]\_qUpdate Begin.\_q\e' }
-event.OnUpdateComplete     { '\0\s[0]\_q' + reference[0] + '.\_q\e' }
-event.OnUpdateFailure      { '\0\s[0]\_q' + reference[0] + '.\_q\e' }
-event.OnUpdateReady
+OnUpdateBegin        { '\0\s[0]\_qUpdate Begin.\_q\e' }
+OnUpdateComplete     { '\0\s[0]\_q' + reference[0] + '.\_q\e' }
+OnUpdateFailure      { '\0\s[0]\_q' + reference[0] + '.\_q\e' }
+OnUpdateReady
 {
 	_n = 0
 	if sender == 'embryo' {
@@ -48,12 +48,12 @@ event.OnUpdateReady
 //******************************************************************************
 // mouse event
 //******************************************************************************
-event.OnMouseMove
+OnMouseMove
 {
 	AYATEMPLATE.MouseMoveWheelFunc(0, 50, 'MouseMove')
 }
 
-event.OnMouseDoubleClick
+OnMouseDoubleClick
 {
 	AYATEMPLATE.MouseEventExec('MouseDoubleClick');
 }
@@ -99,7 +99,7 @@ MouseMove0Bust : nonoverlap
 //******************************************************************************
 // key event
 //******************************************************************************
-event.OnKeyPress
+OnKeyPress
 {
 	if ISFUNC('sys.key.' + reference[0]) {
 		EVAL('sys.key.' + reference[0])
@@ -112,14 +112,7 @@ sys.key.r
 //******************************************************************************
 // other
 //******************************************************************************
-event.OnSurfaceRestore
+OnSurfaceRestore
 {
 	'\1\s[10]\0\s[0]\e'
-}
-//******************************************************************************
-// OnMahjong event
-//******************************************************************************
-event.OnMahjong
-{
-	OnMahjong()
 }
