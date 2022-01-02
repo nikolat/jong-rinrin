@@ -35,7 +35,6 @@ messagetxt, messagetxt/japanese.txt	// ログに記録されるエラーメッ�
 //辞書
 //------------------------------------------------------------------------------
 dic, dict/event.txt
-dic, dict/notify.txt
 dic, dict/resource.txt
 dic, dict/yaya_tmpl_util.txt
 dic, OnMahjong.txt

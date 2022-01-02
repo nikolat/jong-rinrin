@@ -1,10 +1,9 @@
 ghost/master/MahjongAI.txt74ef1e80f5cb97e468b619ab17bef721size=18431date=2021-12-20T18:42:37charset=Shift_JIS
-ghost/master/OnMahjong.txtf051d0d9ec0234182c20ea2ecd7d8a38size=20070date=2022-01-02T20:20:52
+ghost/master/OnMahjong.txt95e7225ffbf685a9b6765c7592a67a03size=20068date=2022-01-03T07:34:49
 ghost/master/descript.txtbfb8a9c5b97e778e02c85ea26ce34184size=301date=2021-09-22T07:26:23
 ghost/master/dict/event.txt6e174435563fe7f6e9cd2aa36110eef8size=3250date=2022-01-02T18:42:30
-ghost/master/dict/notify.txtb00b45ff844cd7fe224e33e62f68512csize=1081date=2022-01-02T18:53:48
 ghost/master/dict/resource.txt753a036b8cdaf5c075bf3055e4c51e4csize=719date=2022-01-02T18:55:55
-ghost/master/dict/yaya_tmpl_util.txt31304c99821072afcd9296819b0b36f5size=5207date=2022-01-02T18:48:35
+ghost/master/dict/yaya_tmpl_util.txtcc2d93d979b02eb332d21cb3b3f4d6d0size=1623date=2022-01-03T07:42:50
 ghost/master/icon.ico8c525821135617b22c52be6e4bb1a3afsize=15086date=2021-09-22T07:26:23
 ghost/master/messagetxt/classical-chinese.txt82769639cb6060591d0797126ac5efabsize=5129date=2021-11-12T16:13:34
 ghost/master/messagetxt/english.txt5a11530a72b2e815b677c19dbd3fac03size=7112date=2021-11-12T11:02:26
@@ -21,7 +20,7 @@ ghost/master/saori/aqtk/AquesTalk.dllf97a031451220238b21ada12dd2ba6b7size=1105
 ghost/master/system/yaya_shiori3.dicf877e00a6a1758140d1076cc888c382csize=49971date=2021-12-20T18:41:17
 ghost/master/system_config.txt84d0b49e6278e7f1816ed84d8506691bsize=714date=2022-01-02T18:32:02
 ghost/master/yaya.dll7fa648b57f5ac2321eb67ffa5d9175a2size=790528date=2021-12-23T11:20:18
-ghost/master/yaya.txt00e291d30ad26abe85d003b7f2ba6be9size=2577date=2022-01-02T18:35:25
+ghost/master/yaya.txt73c1226ad5d06b7c41ff536c8d55096asize=2556date=2022-01-03T07:36:50
 ghost/master/yaya_config.txtf64368c1cc6a3cb55a47c18b7b2879dfsize=3799date=2021-12-22T08:15:45
 ghost/master/yaya_emerg.txt42e1cae47844758c9402157e26983dd0size=1054date=2021-09-22T07:26:23
 ghost/master/yaya_emerg_dic.txtad71463d2f95a1c75d604ec18fba4abesize=913date=2022-01-02T18:58:12

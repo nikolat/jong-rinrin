@@ -21,10 +21,10 @@ MJ.ShowAllLogMode
 {
 	0
 }
-// 自分の名前(sakura.name)
+// 自分の名前(sakuraname)
 MJ.PlayerName
 {
-	sakura.name
+	sakuraname
 }
 
 //**********************************************************
