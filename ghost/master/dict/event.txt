@@ -116,3 +116,18 @@ OnSurfaceRestore
 {
 	'\1\s[10]\0\s[0]\e'
 }
+//******************************************************************************
+// tama
+//******************************************************************************
+On_tamaOpen{
+	SETTAMAHWND(reference[0])
+	SHIORI3FW.Push_X_SSTP_PassThru('Tittle','tama test: ' + SHIORI3FW.GhostName)
+	SHIORI3FW.Push_X_SSTP_PassThru('Icon','icon.ico')
+	SHIORI3FW.Push_X_SSTP_PassThru('border.color','294729')
+	SHIORI3FW.Push_X_SSTP_PassThru('background.color','4b694b')
+	SHIORI3FW.Push_X_SSTP_PassThru('default.color','ffffff')
+	SHIORI3FW.Push_X_SSTP_PassThru('face','Nishiki-teki')
+}
+On_tamaExit{
+    SETTAMAHWND(0)
+}
