@@ -1,7 +1,7 @@
 ghost/master/MahjongAI.txt9518cebe44410faae69e389dd9ad0cc2size=17675date=2022-01-03T20:08:20charset=Shift_JIS
 ghost/master/OnMahjong.txtd0ab0a246966cef46ba9ca16b9ae9b63size=19291date=2022-01-03T20:08:30
 ghost/master/descript.txt81efed5108f5e3ce4c7a31e931faaa46size=289date=2022-01-03T20:08:03
-ghost/master/dict/event.txt98ed3697a08c9df413b0d37f925340e6size=3738date=2022-02-19T22:40:41
+ghost/master/dict/event.txtc97fb1b3b8668f702b43d5d4f4400cebsize=3746date=2022-04-02T17:28:37
 ghost/master/dict/resource.txtdd105a817ca1d3edebaa229547fe3bf9size=698date=2022-01-03T20:09:42
 ghost/master/dict/yaya_tmpl_util.txtdefef66d2b3d29854ad0a5b548e54122size=1564date=2022-01-03T20:10:03
 ghost/master/icon.ico8c525821135617b22c52be6e4bb1a3afsize=15086date=2021-09-22T07:26:23
@@ -19,13 +19,13 @@ ghost/master/saori/aqtk/AqTalkSaori_readme.txt87aa9972151b8ed2b286b7b196291c38
 ghost/master/saori/aqtk/AquesTalk.dllf97a031451220238b21ada12dd2ba6b7size=110592date=2010-04-01T17:36:56
 ghost/master/system/yaya_shiori3.dicf877e00a6a1758140d1076cc888c382csize=49971date=2021-12-20T18:41:17
 ghost/master/system_config.txt84d0b49e6278e7f1816ed84d8506691bsize=714date=2022-01-02T18:32:02
-ghost/master/yaya.dll4bc393d3aa97ba7d250c120dcd478ffasize=798720date=2022-02-13T06:17:12
+ghost/master/yaya.dll866db1635a1b1be0a46fc16e4abe2a41size=839680date=2022-03-08T15:25:00
 ghost/master/yaya.txt73c1226ad5d06b7c41ff536c8d55096asize=2556date=2022-01-03T07:36:50
 ghost/master/yaya_config.txtf64368c1cc6a3cb55a47c18b7b2879dfsize=3799date=2021-12-22T08:15:45
 ghost/master/yaya_emerg.txte65295d4b94c64171b8b9d5a90ccc584size=1061date=2022-01-03T20:05:34
 ghost/master/yaya_emerg_dic.txtad71463d2f95a1c75d604ec18fba4abesize=913date=2022-01-02T18:58:12
 install.txt965c71007cf2125be13278efde31b642size=69date=2022-01-03T20:16:30
-readme.txta447365311280b24a542291fb932fefbsize=2614date=2022-01-03T20:16:41
+readme.txt1e40e25d09b86f6d7f87a21845097bd9size=2614date=2022-04-02T17:24:26
 shell/master/descript.txt65fdce11ea482f851f00f8b01955f6fesize=811date=2022-01-03T20:17:15
 shell/master/element0101.png73ff74efb9982b38b42bd3333189331asize=13224date=2021-09-22T07:26:23
 shell/master/element0102.png8504f3c46bfc933d871e5377d69b2776size=12955date=2021-09-22T07:26:23
