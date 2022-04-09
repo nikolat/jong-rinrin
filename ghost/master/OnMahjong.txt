@@ -223,6 +223,7 @@ MJ.GetPlayers
 	_r = IARRAY()
 	_i = 0
 	_findOya = 0
+	_count = 0;
 	while ARRAYSIZE(_r) < 4 {
 		if MJ.Save.PlayerName[_i] == _argv[0] {
 			_findOya = 1
@@ -231,6 +232,9 @@ MJ.GetPlayers
 			_r ,= MJ.Save.PlayerName[_i]
 		}
 		_i = (_i + 1) % 4
+		_count++
+		if _count > 10
+			break
 	}
 	_r
 }
