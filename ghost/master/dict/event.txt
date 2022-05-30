@@ -121,7 +121,8 @@ OnSurfaceRestore
 //******************************************************************************
 On_tamaOpen
 {
-	SETTAMAHWND(reference[0])
+	TamaHwnd = reference[0]
+	SETTAMAHWND(TamaHwnd)
 	SHIORI3FW.Push_X_SSTP_PassThru('Title', 'tama test: ' + SHIORI3FW.GhostName)
 	SHIORI3FW.Push_X_SSTP_PassThru('Icon', 'icon.ico')
 	SHIORI3FW.Push_X_SSTP_PassThru('border.color', '294729')
@@ -131,5 +132,11 @@ On_tamaOpen
 }
 On_tamaExit
 {
-    SETTAMAHWND(0)
+	ERASEVAR('TamaHwnd')
+	SETTAMAHWND(0)
+}
+OnInitialize
+{
+	if reference[0] == 'reload'
+		SETTAMAHWND(TamaHwnd)
 }
