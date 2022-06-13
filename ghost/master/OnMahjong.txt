@@ -131,6 +131,7 @@ MJ.gameend : nonoverlap
 		'\0\s[0]いい対局だった。\e'
 		'\0\s[6]勝負は時の運。\e'
 	}
+	MJ.kyokuinit()
 	ERASEVAR('MJ.Save.PlayerName')
 	ERASEVAR('MJ.Save.Player.Score')
 }
@@ -168,6 +169,7 @@ MJ.kyokuinit
 {
 	ERASEVAR('MJ.Save.Status')
 	ERASEVAR('MJ.Save.Tehai')
+	ERASEVAR('MJ.Save.Nokori')
 	ERASEVAR('MJ.Save.Tsumo')
 	ERASEVAR('MJ.Save.Kawa')
 	ERASEVAR('MJ.Save.Richi')

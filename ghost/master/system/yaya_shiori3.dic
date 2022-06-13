@@ -130,7 +130,6 @@ load
 	SHIORI3FW.LastAITalk   = ''
 	SHIORI3FW.LastAITalkTime = _sec
 	SHIORI3FW.TalkEndTime  = _sec
-	SHIORI3FW.IsTalking    = 0
 	
 	if GETTYPE(SHIORI3FW.LastSurface) != 4 {
 		SHIORI3FW.LastSurface  = (0,10)
@@ -285,6 +284,12 @@ SHIORI3FW.ErrorDescription
 SHIORI3FW.ErrorLevel
 SHIORI3FW.LastErrorDescription
 SHIORI3FW.Capability
+SHIORI3FW.DebugMode
+SHIORI3FW.Status
+SHIORI3FW.UserName
+SHIORI3FW.UserNameFull
+SHIORI3FW.UserBirthday
+SHIORI3FW.UserSex
 C_CRLF2
 C_CRLF
 C_BYTE1
@@ -294,6 +299,7 @@ C_BYTE1
 	//SHIORI3FW.ShellNameOld
 	//SHIORI3FW.ShellPath
 	//SHIORI3FW.BalloonName
+	//SHIORI3FW.BalloonNameOld
 	//SHIORI3FW.BalloonPath
 	//SHIORI3FW.LastSurface
 	//SHIORI3FW.IsVisible
@@ -1289,7 +1295,7 @@ SHIORI3FW.GetGhostNameFromDescriptTxt
 	if _charset == ''
 		_charset = 'Shift_JIS'
 	FCHARSET(_charset)
-	if !FOPEN(_filename = "%_argv[0]\ghost\master\descript.txt", "r")
+	if !FOPEN(_filename = "%(_argv[0])\ghost\master\descript.txt", "r")
 		return
 
 	_ghostname = IARRAY
@@ -1324,7 +1330,7 @@ SHIORI3FW.GetGhostNameFromDescriptTxt
 //------------------------------------------------------------------------------
 SHIORI3FW.GetCharsetFromDescriptTxt
 {
-	if !FOPEN(_filename = "%_argv[0]\ghost\master\descript.txt", "r")
+	if !FOPEN(_filename = "%(_argv[0])\ghost\master\descript.txt", "r")
 		return
 
 	_charset = ''
@@ -1497,13 +1503,11 @@ SHIORI3FW.RequestLib
 //------------------------------------------------------------------------------
 SHIORI3FW.MakeValueexVariable
 {
-	SHIORI3FW.ValueexList = IARRAY
-	_sz                   = ARRAYSIZE(var.lib.key)
+	_sz = ARRAYSIZE(var.lib.key)
 	for _i = 0; _i < _sz; _i++ {
 		if SUBSTR(_keyname = var.lib.key[_i], 0, 5) == "Value" {
 			_varname = "valueex%(SUBSTR(_keyname, 5, 3))"
 			LETTONAME(_varname, var.lib.value[_i])
-			SHIORI3FW.ValueexList ,= _varname
 			valueex[TOINT(SUBSTR(_keyname, 5, 3))] = var.lib.value[_i]
 		}
 	}
@@ -1515,8 +1519,12 @@ SHIORI3FW.MakeValueexVariable
 //------------------------------------------------------------------------------
 SHIORI3FW.ClearValueexVariable
 {
-	foreach SHIORI3FW.ValueexList; _exname { ERASEVAR(_exname) }
-	ERASEVAR('SHIORI3FW.ValueexList')
+	_valueexList = GETVARLIST('valueex')
+	foreach _valueexList; _exname {
+		if ISINTSTR(ERASE(_exname, 0, STRLEN('valueex'))) {
+			ERASEVAR(_exname)
+		}
+	}
 	ERASEVAR('valueex')
 }
 
@@ -1868,7 +1876,7 @@ SHIORI3EV.On_enable_log : void
 	}
 }
 
-SHIORI3EV.On_log_path : void
+SHIORI3EV.On_log_path
 {
 	SHIORI3FW.Path + 'yaya_ssp_debug.log'
 }
