@@ -1,8 +1,8 @@
 delete.txt3c69fdf8a70c59378e0e86077c415457size=245date=2022-05-29T20:30:09charset=Shift_JIS
-ghost/master/MahjongAI.txt9518cebe44410faae69e389dd9ad0cc2size=17675date=2022-01-03T20:08:20
+ghost/master/MahjongAI.txta30b373bebcf46b61cdc584b12426bb1size=17675date=2022-06-15T19:14:09
 ghost/master/OnMahjong.txt5a2cada7a42639417a941820e9734afesize=19385date=2022-06-13T20:03:32
 ghost/master/descript.txt81efed5108f5e3ce4c7a31e931faaa46size=289date=2022-01-03T20:08:03
-ghost/master/dict/event.txtae2eef2c1c713fafb21732d7b1baefbasize=3855date=2022-05-31T04:23:07
+ghost/master/dict/event.txt31f5eea0c3dd2acbcf0a5948a7c08ca8size=3683date=2022-06-16T17:37:45
 ghost/master/dict/resource.txtdd105a817ca1d3edebaa229547fe3bf9size=698date=2022-01-03T20:09:42
 ghost/master/dict/yaya_tmpl_util.txtdefef66d2b3d29854ad0a5b548e54122size=1564date=2022-01-03T20:10:03
 ghost/master/icon.ico8c525821135617b22c52be6e4bb1a3afsize=15086date=2021-09-22T07:26:23
@@ -13,9 +13,9 @@ ghost/master/saori/aqtk/AqLicense.txteadf599be95f6afa75fa50b2295521c0size=2792
 ghost/master/saori/aqtk/AqTalkSaori.dll3ca3db02a21292ac7fdbbe572f7e4254size=192512date=2010-04-02T17:08:22
 ghost/master/saori/aqtk/AqTalkSaori_readme.txt87aa9972151b8ed2b286b7b196291c38size=5880date=2010-04-02T17:09:54
 ghost/master/saori/aqtk/AquesTalk.dllf97a031451220238b21ada12dd2ba6b7size=110592date=2010-04-01T17:36:56
-ghost/master/system/yaya_shiori3.dic95fa93ee6bf9452c3f6e6f2881ff4426size=50847date=2022-06-15T11:11:18
+ghost/master/system/yaya_shiori3.dicb0b609ac513d30e6e9459ab7c5c5e829size=51291date=2022-06-16T17:57:56
 ghost/master/system_config.txt7ed0b973013bdc5dd990f8d05b93559dsize=667date=2022-06-04T07:26:26
-ghost/master/yaya.dll58fc69ef315965ef7328a69476767006size=876544date=2022-06-02T20:46:04
+ghost/master/yaya.dll5c438e37e9fa5b97bb16c9b7ed2b25d7size=880640date=2022-06-16T15:25:50
 ghost/master/yaya.txt73c1226ad5d06b7c41ff536c8d55096asize=2556date=2022-01-03T07:36:50
 ghost/master/yaya_config.txtf64368c1cc6a3cb55a47c18b7b2879dfsize=3799date=2021-12-22T08:15:45
 ghost/master/yaya_emerg.txte65295d4b94c64171b8b9d5a90ccc584size=1061date=2022-01-03T20:05:34
