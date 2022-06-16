@@ -1,0 +1,2 @@
+dic, config.dic, UTF-8
+dic, shiori3.dic, UTF-8
