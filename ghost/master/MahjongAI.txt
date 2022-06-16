@@ -712,7 +712,7 @@ MJ.GetShantenYaku
 	_strBafuhai = _argv[1]
 	_strJifuhai = _argv[2]
 	_dll = 'saori/MahjongUtil/MahjongUtil.dll'
-	_shanten = FUNCTIONEX(_dll, 'shanten_yaku' ,_strTehai, _strBafuhai, _strJifuhai)
+	_shanten = FUNCTIONEX(_dll, 'shanten_yaku', _strTehai, _strBafuhai, _strJifuhai)
 	_shanten
 }
 
@@ -721,7 +721,7 @@ MJ.GetMentsuPattern
 {
 	_strTehai = _argv[0]
 	_dll = 'saori/MahjongUtil/MahjongUtil.dll'
-	void FUNCTIONEX(_dll, 'shanten' ,_strTehai)
+	void FUNCTIONEX(_dll, 'shanten', _strTehai)
 	_mentsuPattern = valueex
 	_mentsuPattern
 }
@@ -731,7 +731,7 @@ MJ.GetMachiArray
 {
 	_strTehai = _argv[0]
 	_dll = 'saori/MahjongUtil/MahjongUtil.dll'
-	_strMachi = FUNCTIONEX(_dll, 'machi' ,_strTehai)
+	_strMachi = FUNCTIONEX(_dll, 'machi', _strTehai)
 	MJ.MakeArrayFromString(_strMachi)
 }
 
@@ -751,6 +751,6 @@ MJ.GetScore
 	_isFinalTileWin = 0
 	_is1stRound = 0
 	_dll = 'saori/MahjongUtil/MahjongUtil.dll'
-	_score = FUNCTIONEX(_dll, 'score' ,_strTehai, _strAtarihai, _strBafuhai, _strJifuhai, _strDora, _isTsumo, _isRichi, _isIppatsu, _isChankan, _isRinshan, _isFinalTileWin, _is1stRound)
+	_score = FUNCTIONEX(_dll, 'score', _strTehai, _strAtarihai, _strBafuhai, _strJifuhai, _strDora, _isTsumo, _isRichi, _isIppatsu, _isChankan, _isRinshan, _isFinalTileWin, _is1stRound)
 	_score
 }
