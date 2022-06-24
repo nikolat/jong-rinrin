@@ -230,10 +230,7 @@ var.lib.key
 var.lib.value
 var.lib.result
 SAORI.DllList
-ghostexlist
-ghostexcount
 selfname
-selfname2
 sakuraname
 keroname
 basewarename
@@ -244,9 +241,6 @@ installedghostlist
 installedsakuralist
 installedkerolist
 ascii
-displaybpp
-displaywidth
-displayheight
 uniqueid
 ghostbootmin
 status
@@ -255,8 +249,6 @@ res_reference
 res_marker
 marker
 res_valuenotify
-refold
-refold0
 SHIORI3FW.Path
 SHIORI3FW.LastAITalk
 SHIORI3FW.LastAITalkTime
@@ -479,6 +471,9 @@ request
 		//特定のイベントを除きExternalなら204で返る
 		if SHIORI3FW.SecurityLevel == 'External' && SHIORI3FW.Eventid != 'OnXUkagakaLinkOpen' {
 			SHIORI3FW.MakeEmptyResponse
+			--
+			C_CRLF
+
 			return
 		}
 
@@ -742,6 +737,11 @@ SHIORI3FW.AssembleReferenceHeader
 				_result += "Marker: %(res_marker)%(C_CRLF)"
 				ERASEVAR('res_marker')
 			}
+		}
+
+		if res_securitylevel != '' {
+			_result += "SecurityLevel: %(res_securitylevel)%(C_CRLF)"
+			ERASEVAR('res_securitylevel')
 		}
 	}
 
@@ -1495,8 +1495,6 @@ SHIORI3FW.RequestLib
 //------------------------------------------------------------------------------
 //関数名：SHIORI3FW.MakeValueexVariable
 //機能　：リクエストヘッダからvalueex*変数を作成します
-//引数　：_argv[0] SAORIファイル名
-//　　　　_argv[1] リクエスト文字列
 //------------------------------------------------------------------------------
 SHIORI3FW.MakeValueexVariable
 {
@@ -1671,12 +1669,6 @@ AVERAGE
 //******************************************************************************
 // システムで処理するイベント群
 //******************************************************************************
-SHIORI3EV.OnUpdateReady : void
-{
-	// OnUpdateReadyならロード中のSAORIをすべてunloadする
-	SHIORI3FW.SaoriUnloadAll
-}
-
 SHIORI3EV.OnUpdateComplete : void
 {
 	// OnUpdateCompleteならdl2を探す。存在したら同名のdllを削除、dl2はdllにリネームする
