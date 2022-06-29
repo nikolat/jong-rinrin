@@ -155,9 +155,7 @@ MJ.Naniwokiru
 			_arDahai ,= _sutehai
 		}
 	}
-	_n = ARRAYSIZE(_arDahai)
-	_index = RAND(_n)
-	_arDahai[_index]
+	ANY(_arDahai)
 }
 
 //手牌から副露を除去
@@ -406,9 +404,8 @@ MJ.GetAnkanHaiBest
 //		if _shantenAfter != '' && _shantenAfter <= _shantenBefore
 //			_arAnkanHaiUseful ,= _h
 //	}
-//	_n = ARRAYSIZE(_arAnkanHaiUseful)
-//	if _n > 0 {
-//		_arAnkanHaiUseful[RAND(_n)]
+//	if ARRAYSIZE(_arAnkanHaiUseful) > 0 {
+//		ANY(_arAnkanHaiUseful)
 //		return
 //	}
 	''
@@ -495,9 +492,8 @@ MJ.GetKakanHaiBest
 		if _shantenAfter != '' && _shantenAfter <= _shantenBefore
 			_arKakanHaiUseful ,= _h
 	}
-	_n = ARRAYSIZE(_arKakanHaiUseful)
-	if _n > 0 {
-		_arKakanHaiUseful[RAND(_n)]
+	if ARRAYSIZE(_arKakanHaiUseful) > 0 {
+		ANY(_arKakanHaiUseful)
 		return
 	}
 	''
@@ -647,9 +643,8 @@ MJ.GetChiMaterialBest
 			_r ,= _c
 		}
 	}
-	_n = ARRAYSIZE(_r)
-	if _n > 0 {
-		_r[RAND(_n)]
+	if ARRAYSIZE(_r) > 0 {
+		ANY(_r)
 	}
 	else {
 		''
