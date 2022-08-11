@@ -3,7 +3,7 @@ file,delete.txt50573f2a12f71b23aeeea2503a95b60dsize=334date=2012-12-21T00:00:
 file,ghost/master/MahjongAI.txt439974a833561dc14ab0a71a74d8ebaesize=17583date=2012-12-21T00:00:00
 file,ghost/master/OnMahjong.txt5a2cada7a42639417a941820e9734afesize=19385date=2012-12-21T00:00:00
 file,ghost/master/descript.txt81efed5108f5e3ce4c7a31e931faaa46size=289date=2012-12-21T00:00:00
-file,ghost/master/dict/event.txt31f5eea0c3dd2acbcf0a5948a7c08ca8size=3683date=2012-12-21T00:00:00
+file,ghost/master/dict/event.txta6b702c0fca8c4be2e7b2c2b60fdb225size=4266date=2012-12-21T00:00:00
 file,ghost/master/dict/resource.txtdd105a817ca1d3edebaa229547fe3bf9size=698date=2012-12-21T00:00:00
 file,ghost/master/dict/yaya_tmpl_util.txtdefef66d2b3d29854ad0a5b548e54122size=1564date=2012-12-21T00:00:00
 file,ghost/master/icon.ico8c525821135617b22c52be6e4bb1a3afsize=15086date=2012-12-21T00:00:00
