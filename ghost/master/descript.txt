@@ -4,7 +4,7 @@ name,雀-リンリン
 sakura.name,リンリン
 kero.name,none
 craftman,Don
-craftmanurl,http://nikolat.herokuapp.com/
+craftmanurl,https://nikolat.github.io/
 homeurl,https://raw.githubusercontent.com/nikolat/jong-rinrin/main/
 shiori,yaya.dll
 icon,icon.ico
