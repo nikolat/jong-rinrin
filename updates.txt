@@ -2,14 +2,14 @@ charset,UTF-8
 file,delete.txt50573f2a12f71b23aeeea2503a95b60dsize=334date=2012-12-21T00:00:00
 file,ghost/master/MahjongAI.txt439974a833561dc14ab0a71a74d8ebaesize=17583date=2012-12-21T00:00:00
 file,ghost/master/OnMahjong.txt5a2cada7a42639417a941820e9734afesize=19385date=2012-12-21T00:00:00
-file,ghost/master/descript.txt81efed5108f5e3ce4c7a31e931faaa46size=289date=2012-12-21T00:00:00
+file,ghost/master/descript.txtf342534103d3c9da016dcc52574f13f6size=286date=2012-12-21T00:00:00
 file,ghost/master/dict/event.txta6b702c0fca8c4be2e7b2c2b60fdb225size=4266date=2012-12-21T00:00:00
 file,ghost/master/dict/resource.txtdd105a817ca1d3edebaa229547fe3bf9size=698date=2012-12-21T00:00:00
 file,ghost/master/dict/yaya_tmpl_util.txtdefef66d2b3d29854ad0a5b548e54122size=1564date=2012-12-21T00:00:00
 file,ghost/master/icon.ico8c525821135617b22c52be6e4bb1a3afsize=15086date=2012-12-21T00:00:00
 file,ghost/master/saori/MahjongUtil/MahjongUtil.dll35dd69d234c4aea8a4d4050f2d0ad952size=225792date=2012-12-21T00:00:00
 file,ghost/master/saori/MahjongUtil/license.txt7161de2ed7a4d9198bbcf853546e9ebdsize=3040date=2012-12-21T00:00:00
-file,ghost/master/saori/MahjongUtil/readme.txta31687c683a49172aac85d87aab9a829size=8264date=2012-12-21T00:00:00
+file,ghost/master/saori/MahjongUtil/readme.txtbdf34c835c17e7b34ab6987b6ba21b3asize=8261date=2012-12-21T00:00:00
 file,ghost/master/saori/aqtk/AqLicense.txt646967832de73129b6495dc5ff2ed311size=2720date=2012-12-21T00:00:00
 file,ghost/master/saori/aqtk/AqTalkSaori.dll3ca3db02a21292ac7fdbbe572f7e4254size=192512date=2012-12-21T00:00:00
 file,ghost/master/saori/aqtk/AqTalkSaori_readme.txtb8b46f2feafc004edd8dfa77397b0260size=5708date=2012-12-21T00:00:00
@@ -24,7 +24,7 @@ file,ghost/master/yaya.txt73c1226ad5d06b7c41ff536c8d55096asize=2556date=2012-
 file,ghost/master/yaya_emerg.txte65295d4b94c64171b8b9d5a90ccc584size=1061date=2012-12-21T00:00:00
 file,ghost/master/yaya_emerg_dic.txt17fe89b7aca3e7f86cbfaae921853c4bsize=880date=2012-12-21T00:00:00
 file,install.txt965c71007cf2125be13278efde31b642size=69date=2012-12-21T00:00:00
-file,readme.txte500240c8bf31483185b0230f9286aaesize=2614date=2012-12-21T00:00:00
+file,readme.txtdce681b3286439daa749d7dc6f943d2fsize=2611date=2012-12-21T00:00:00
 file,shell/master/descript.txt65fdce11ea482f851f00f8b01955f6fesize=811date=2012-12-21T00:00:00
 file,shell/master/element0101.png73ff74efb9982b38b42bd3333189331asize=13224date=2012-12-21T00:00:00
 file,shell/master/element0102.png8504f3c46bfc933d871e5377d69b2776size=12955date=2012-12-21T00:00:00
