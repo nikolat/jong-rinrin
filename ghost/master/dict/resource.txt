@@ -16,6 +16,6 @@ On_sakura.portalsites
 On_sakura.recommendsites
 {
 	"/
-		yaya-shiori%(CHR(1))https://github.com/ponapalt/yaya-shiori/wiki%(CHR(1))%(CHR(1))%(CHR(2))/
+		yaya-shiori%(CHR(1))https://github.com/YAYA-shiori/yaya-shiori/wiki%(CHR(1))%(CHR(1))%(CHR(2))/
 	"
 }
