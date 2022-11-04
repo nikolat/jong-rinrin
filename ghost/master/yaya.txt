@@ -39,6 +39,8 @@ dic, dict/resource.txt
 dic, dict/yaya_tmpl_util.txt
 dic, OnMahjong.txt
 dic, MahjongAI.txt
+dic, ex/TexasHoldem/dic_texas_holdem.dic
+dic, ex/TexasHoldem/dic_texas_holdem_ai.dic
 
 //------------------------------------------------------------------------------
 //セーブファイル暗号化

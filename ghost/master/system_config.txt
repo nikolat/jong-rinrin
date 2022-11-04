@@ -10,3 +10,4 @@ dicdir, system		// YAYA:システム辞書。必ず最初に指定すること�
 // log, ayame.log
 iolog.filter.mode, allowlist
 iolog.filter.keyword, OnMahjong
+iolog.filter.keyword, OnPoker

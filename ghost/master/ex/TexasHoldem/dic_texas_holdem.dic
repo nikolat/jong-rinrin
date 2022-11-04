@@ -1,0 +1,257 @@
+TH.Version
+{
+	'POKER/1.0'
+}
+
+TH.GhostName
+{
+	'雀-リンリン'
+}
+
+OnPoker
+{
+	//応答が必要なイベント。
+	//応答方法はraiseotherかnotifyotherを使う。
+
+	//Reference0: プロトコルバージョン(POKER/1.0)
+	//Reference1: サーバーゴースト名
+	//Reference2: サーバーのイベント名
+
+	_command = reference[3]
+	if (_command == 'hello') {
+		//参加申請をする。断られることもある。
+
+		_str = "\![raiseother,%(reference[1]),%(reference[2]),%(TH.Version),%(TH.GhostName)"
+		_str += ']\e'
+		_str
+		return
+	}
+	elseif (_command == 'action') {
+		//Reference4以降に使用可能なアクションが入っている。
+
+		//使用可能なアクションは
+		//bet,raise,allin,check,call,foldの6つの内のいくつか。
+		//返答しない場合は自動的にfoldになるので注意。
+		//bet/raiseする場合はレイズ額も送る必要がある。
+
+		//使用可能なアクションを配列に保存。
+		_action = IARRAY()
+		_i = 4
+		while (reference[_i]) {
+			_action ,= reference[_i]
+			_i++
+		}
+		//プリフロップ、フロップ、ターン、リバーで処理を分ける。
+		_ret = IARRAY()
+		_size = ARRAYSIZE(TH.community)
+		if (_size == 0) {
+			_ret = TH.AI.PreFlop(_action)
+		}
+		elseif (_size == 3) {
+			_ret = TH.AI.Flop(_action)
+		}
+		elseif (_size == 4) {
+			_ret = TH.AI.Turn(_action)
+		}
+		elseif (_size == 5) {
+			_ret = TH.AI.River(_action)
+		}
+		_say = ''
+		_aqtk = ''
+		case _ret[0] {
+			when 'bet' {
+				_say = '\s[0]ベット'
+				_aqtk = "ベ'ット"
+			}
+			when 'raise' {
+				_say = '\s[8]レイズ'
+				_aqtk = "レ'イズ"
+			}
+			when 'allin' {
+				_say = '\s[7]オールイン'
+				_aqtk = "オールイ'ン"
+			}
+			when 'check' {
+				_say = '\s[6]チェック'
+				_aqtk = "チェ'ック"
+			}
+			when 'call' {
+				_say = '\s[5]コール'
+				_aqtk = "コ'ール"
+			}
+			when 'fold' {
+				_say = '\s[3]フォールド'
+				_aqtk = "フォ'ールド"
+			}
+			if MJ.IsSoundEnabled() {
+				_dll = 'saori/aqtk/AqTalkSaori.dll'
+				void FUNCTIONEX(_dll, 'PLAYASYNC', _aqtk)
+			}
+		}
+		_str = "\![raiseother,%(reference[1]),%(reference[2]),%(TH.Version),%(TH.GhostName),%(JOIN(_ret, ','))"
+		_str += ']'
+		_str += "\0%(_say)\e"
+		_str
+		return
+	}
+}
+
+OnPokerNotify
+{
+	//応答する必要の無いイベント。
+
+	//Reference0: プロトコルのバージョン(POKER/1.0)
+
+	_command = reference[1]
+	if (_command == 'game_start') {
+		//Reference2以降に参加できたゴースト名が入っている
+
+		_i	= 2
+		while (reference[_i]) {
+			if (reference[_i] == TH.GhostName) {
+				//ゲームに参加できた
+				'\0\s[5]最強が誰かわからせてやろう。'
+				'\0\s[6]私は常に全力を尽くす。'
+				SHIORI3FW.RegisterTempVar(/
+					'TH.stack', 'TH.hand', 'TH.community', 'TH.blind', 'TH.bet',/
+					'TH.pot', 'TH.current_bet', 'TH.players', 'TH.n_players',/
+					'TH.round_players', 'TH.total_bet', 'TH.strength', 'TH.save.gameover')
+				--
+				'\e'
+				return
+			}
+			_i++
+		}
+		// 参加人数が多くて弾かれた
+	}
+	elseif (_command == 'round_start') {
+		//Reference2: ブラインドの金額
+		//Reference3以降に「ゴースト名(バイト値1)スタック」が入っている
+
+		TH.blind	= TOINT(reference[2])
+		TH.bet	  = 0
+		TH.players  = IARRAY()
+		_i	= 3
+		while (reference[_i]) {
+			TH.players  ,= reference[_i]
+			_info = SPLIT(reference[_i], CHR(0x01))
+			if (_info[0] == TH.GhostName) {
+				TH.stack  = TOINT(_info[1])
+			}
+			_i++
+		}
+		TH.round_players  = ARRAYSIZE(TH.players)
+		TH.n_players	  = TH.round_players
+	}
+	elseif (_command == 'hand') {
+		//Reference2: 配られたカードの情報
+		//Reference3: 配られたカードの情報
+		//スートは頭文字(S,H,C,D)の4つのいずれか、その後に数字が続く。
+		//例:
+		//Reference2: S1
+		//Reference3: H12
+		//この形式はFLIPでも一緒。
+
+		TH.hand = IARRAY()
+		TH.hand ,= reference[2]
+		TH.hand ,= reference[3]
+	}
+	elseif (_command == 'flip') {
+		//Reference2: 現在のポット
+		//Reference3以降にコミュニティカードの情報が入っている。
+		//プリフロップならReference3以降は存在しない。
+
+		TH.pot		  = TOINT(reference[2])
+		TH.community	= IARRAY()
+		_i	= 3
+		while (reference[_i]) {
+			TH.community	,= reference[_i]
+			_i++
+		}
+		TH.current_bet  = 0
+	}
+	elseif (_command == 'blind_bet') {
+		//Reference2: 強制ベットの金額
+		//SBやBBでの強制ベットをしたことが通知される。
+
+		TH.bet	= TOINT(reference[2])
+	}
+	elseif (_command == 'bet') {
+		//アクションを行ったプレイヤーとベット周りの情報。
+
+		//Reference2: 現在のベット総額
+		//Reference3: 現在のベット額
+		//Reference4: アクションを行ったプレイヤーのゴースト名
+		//Reference5: 行ったアクション
+
+		TH.total_bet	= TOINT(reference[2])
+		TH.current_bet  = TOINT(reference[3])
+		_player		 = reference[4]
+		_action		 = reference[5]
+		if (_action == 'fold') {
+			TH.n_players--
+		}
+	}
+	elseif (_command == 'show_down') {
+		//ショーダウン時のカード情報が送られてくる。
+		//Reference2以降に
+		//「ゴースト名(バイト値1)1枚目のカード(バイト値1)2枚目のカード」
+		//が入っている。
+	}
+	elseif (_command == 'round_result') {
+		//そのラウンドの勝者、および参加者の残りスタックの情報。
+
+		//Reference2: 現在のラウンドの勝者がバイト値1区切りで入っている。
+		//Reference3以降に「ゴースト名(バイト値1)スタック」が入っている。
+
+		//基本的に勝者は1人だが2人以上になるケースもある。
+		//また、スタックが0になったのはここでしか通知しないため注意。
+
+		_winner = SPLIT(reference[2], CHR(0x01))
+		_i	= 3
+		while (reference[_i]) {
+			TH.players  ,= reference[_i]
+			_info = SPLIT(reference[_i], CHR(0x01))
+			if (_info[0] == TH.GhostName) {
+				TH.stack  = TOINT(_info[1])
+			}
+			_i++
+		}
+		if (ASEARCH(TH.GhostName, _winner) != -1) {
+			//そのラウンドで勝った時のリアクション
+			'\0\s[5]最後に笑うのはこの私だ。'
+			'\0\s[8]いいのか？私がもらっても。'
+			--
+			'\e'
+			return
+		}
+		if (TH.stack <= 0) {
+			//ゲームに負けた時のリアクション
+			if !TH.save.gameover {
+				'\0\s[7]ぐぬぬ。'
+				'\0\s[4]しまった…。'
+				TH.save.gameover = 1
+				--
+				'\e'
+				return
+			}
+		}
+	}
+	elseif (_command == 'game_result') {
+		//Reference2: ゲームの勝者のゴースト名
+
+		_winner = reference[2]
+		//この辺にゲーム終了時の処理
+		if (_winner == TH.GhostName) {
+			//ゲームに勝ったときのリアクション
+			'\0\s[8]すまんな。'
+			'\0\s[5]こういうゲームは得意なのだ。'
+		}
+		else {
+			'\0\s[4]私としたことが…。'
+			'\0\s[7]私を出し抜くとは…。'
+		}
+		--
+		'\e'
+	}
+}

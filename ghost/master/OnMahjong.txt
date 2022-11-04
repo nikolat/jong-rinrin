@@ -669,7 +669,7 @@ MJ.say : nonoverlap
 		'\0' + _say + '\e'
 		if MJ.IsSoundEnabled() {
 			_dll = 'saori/aqtk/AqTalkSaori.dll'
-			void FUNCTIONEX(_dll, 'PLAYASYNC' ,_aqtk)
+			void FUNCTIONEX(_dll, 'PLAYASYNC', _aqtk)
 		}
 	}
 	else {
