@@ -56,41 +56,8 @@ OnPoker
 		elseif (_size == 5) {
 			_ret = TH.AI.River(_action)
 		}
-		_say = ''
-		_aqtk = ''
-		case _ret[0] {
-			when 'bet' {
-				_say = '\s[0]ベット'
-				_aqtk = "ベ'ット"
-			}
-			when 'raise' {
-				_say = '\s[8]レイズ'
-				_aqtk = "レ'イズ"
-			}
-			when 'allin' {
-				_say = '\s[7]オールイン'
-				_aqtk = "オールイ'ン"
-			}
-			when 'check' {
-				_say = '\s[6]チェック'
-				_aqtk = "チェ'ック"
-			}
-			when 'call' {
-				_say = '\s[5]コール'
-				_aqtk = "コ'ール"
-			}
-			when 'fold' {
-				_say = '\s[3]フォールド'
-				_aqtk = "フォ'ールド"
-			}
-			if MJ.IsSoundEnabled() {
-				_dll = 'saori/aqtk/AqTalkSaori.dll'
-				void FUNCTIONEX(_dll, 'PLAYASYNC', _aqtk)
-			}
-		}
 		_str = "\![raiseother,%(reference[1]),%(reference[2]),%(TH.Version),%(TH.GhostName),%(JOIN(_ret, ','))"
-		_str += ']'
-		_str += "\0%(_say)\e"
+		_str += ']\e'
 		_str
 		return
 	}
@@ -190,6 +157,41 @@ OnPokerNotify
 		_action		 = reference[5]
 		if (_action == 'fold') {
 			TH.n_players--
+		}
+		if _player == TH.GhostName {
+			_say = ''
+			_aqtk = ''
+			case _action {
+				when 'bet' {
+					_say = '\s[0]ベット'
+					_aqtk = "ベ'ット"
+				}
+				when 'raise' {
+					_say = '\s[8]レイズ'
+					_aqtk = "レ'イズ"
+				}
+				when 'allin' {
+					_say = '\s[7]オールイン'
+					_aqtk = "オールイ'ン"
+				}
+				when 'check' {
+					_say = '\s[6]チェック'
+					_aqtk = "チェ'ック"
+				}
+				when 'call' {
+					_say = '\s[5]コール'
+					_aqtk = "コ'ール"
+				}
+				when 'fold' {
+					_say = '\s[3]フォールド'
+					_aqtk = "フォ'ールド"
+				}
+				if MJ.IsSoundEnabled() {
+					_dll = 'saori/aqtk/AqTalkSaori.dll'
+					void FUNCTIONEX(_dll, 'PLAYASYNC', _aqtk)
+				}
+			}
+			"\0%(_say)\e"
 		}
 	}
 	elseif (_command == 'show_down') {
