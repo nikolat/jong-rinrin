@@ -21,7 +21,7 @@ OnPoker
 	if (_command == 'hello') {
 		//参加申請をする。断られることもある。
 
-		_str = "\![raiseother,%(reference[1]),%(reference[2]),%(TH.Version),%(TH.GhostName)"
+		_str = "\![raiseother,%(reference[1]),%(reference[2]),%(TH.Version()),%(TH.GhostName())"
 		_str += ']\e'
 		_str
 		return
@@ -56,7 +56,7 @@ OnPoker
 		elseif (_size == 5) {
 			_ret = TH.AI.River(_action)
 		}
-		_str = "\![raiseother,%(reference[1]),%(reference[2]),%(TH.Version),%(TH.GhostName),%(JOIN(_ret, ','))"
+		_str = "\![raiseother,%(reference[1]),%(reference[2]),%(TH.Version()),%(TH.GhostName()),%(JOIN(_ret, ','))"
 		_str += ']\e'
 		_str
 		return
@@ -73,9 +73,9 @@ OnPokerNotify
 	if (_command == 'game_start') {
 		//Reference2以降に参加できたゴースト名が入っている
 
-		_i	= 2
+		_i = 2
 		while (reference[_i]) {
-			if (reference[_i] == TH.GhostName) {
+			if (reference[_i] == TH.GhostName()) {
 				//ゲームに参加できた
 				'\0\s[5]最強が誰かわからせてやろう。'
 				'\0\s[6]私は常に全力を尽くす。'
@@ -95,20 +95,20 @@ OnPokerNotify
 		//Reference2: ブラインドの金額
 		//Reference3以降に「ゴースト名(バイト値1)スタック」が入っている
 
-		TH.blind	= TOINT(reference[2])
-		TH.bet	  = 0
-		TH.players  = IARRAY()
-		_i	= 3
+		TH.blind = TOINT(reference[2])
+		TH.bet = 0
+		TH.players = IARRAY()
+		_i = 3
 		while (reference[_i]) {
-			TH.players  ,= reference[_i]
+			TH.players ,= reference[_i]
 			_info = SPLIT(reference[_i], CHR(0x01))
-			if (_info[0] == TH.GhostName) {
-				TH.stack  = TOINT(_info[1])
+			if (_info[0] == TH.GhostName()) {
+				TH.stack = TOINT(_info[1])
 			}
 			_i++
 		}
-		TH.round_players  = ARRAYSIZE(TH.players)
-		TH.n_players	  = TH.round_players
+		TH.round_players = ARRAYSIZE(TH.players)
+		TH.n_players = TH.round_players
 	}
 	elseif (_command == 'hand') {
 		//Reference2: 配られたカードの情報
@@ -128,20 +128,20 @@ OnPokerNotify
 		//Reference3以降にコミュニティカードの情報が入っている。
 		//プリフロップならReference3以降は存在しない。
 
-		TH.pot		  = TOINT(reference[2])
-		TH.community	= IARRAY()
-		_i	= 3
+		TH.pot = TOINT(reference[2])
+		TH.community = IARRAY()
+		_i = 3
 		while (reference[_i]) {
-			TH.community	,= reference[_i]
+			TH.community ,= reference[_i]
 			_i++
 		}
-		TH.current_bet  = 0
+		TH.current_bet = 0
 	}
 	elseif (_command == 'blind_bet') {
 		//Reference2: 強制ベットの金額
 		//SBやBBでの強制ベットをしたことが通知される。
 
-		TH.bet	= TOINT(reference[2])
+		TH.bet = TOINT(reference[2])
 	}
 	elseif (_command == 'bet') {
 		//アクションを行ったプレイヤーとベット周りの情報。
@@ -151,14 +151,14 @@ OnPokerNotify
 		//Reference4: アクションを行ったプレイヤーのゴースト名
 		//Reference5: 行ったアクション
 
-		TH.total_bet	= TOINT(reference[2])
-		TH.current_bet  = TOINT(reference[3])
-		_player		 = reference[4]
-		_action		 = reference[5]
+		TH.total_bet = TOINT(reference[2])
+		TH.current_bet = TOINT(reference[3])
+		_player = reference[4]
+		_action = reference[5]
 		if (_action == 'fold') {
 			TH.n_players--
 		}
-		if _player == TH.GhostName {
+		if _player == TH.GhostName() {
 			_say = ''
 			_aqtk = ''
 			case _action {
@@ -186,10 +186,10 @@ OnPokerNotify
 					_say = '\s[3]フォールド'
 					_aqtk = "フォ'ールド"
 				}
-				if MJ.IsSoundEnabled() {
-					_dll = 'saori/aqtk/AqTalkSaori.dll'
-					void FUNCTIONEX(_dll, 'PLAYASYNC', _aqtk)
-				}
+			}
+			if MJ.IsSoundEnabled() {
+				_dll = 'saori/aqtk/AqTalkSaori.dll'
+				void FUNCTIONEX(_dll, 'PLAYASYNC', _aqtk)
 			}
 			"\0%(_say)\e"
 		}
@@ -210,16 +210,17 @@ OnPokerNotify
 		//また、スタックが0になったのはここでしか通知しないため注意。
 
 		_winner = SPLIT(reference[2], CHR(0x01))
-		_i	= 3
+		TH.players = IARRAY()
+		_i = 3
 		while (reference[_i]) {
-			TH.players  ,= reference[_i]
+			TH.players ,= reference[_i]
 			_info = SPLIT(reference[_i], CHR(0x01))
-			if (_info[0] == TH.GhostName) {
-				TH.stack  = TOINT(_info[1])
+			if (_info[0] == TH.GhostName()) {
+				TH.stack = TOINT(_info[1])
 			}
 			_i++
 		}
-		if (ASEARCH(TH.GhostName, _winner) != -1) {
+		if (ASEARCH(TH.GhostName(), _winner) != -1) {
 			//そのラウンドで勝った時のリアクション
 			'\0\s[5]最後に笑うのはこの私だ。'
 			'\0\s[8]いいのか？私がもらっても。'
@@ -244,7 +245,7 @@ OnPokerNotify
 
 		_winner = reference[2]
 		//この辺にゲーム終了時の処理
-		if (_winner == TH.GhostName) {
+		if (_winner == TH.GhostName()) {
 			//ゲームに勝ったときのリアクション
 			'\0\s[8]すまんな。'
 			'\0\s[5]こういうゲームは得意なのだ。'
