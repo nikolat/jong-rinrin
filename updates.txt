@@ -1,12 +1,12 @@
 charset,UTF-8
 file,delete.txt50573f2a12f71b23aeeea2503a95b60dsize=334date=2012-12-21T00:00:00
 file,ghost/master/MahjongAI.txt439974a833561dc14ab0a71a74d8ebaesize=17583date=2012-12-21T00:00:00
-file,ghost/master/OnMahjong.txt5865e8007ed699acf3e9f03c1eb7b450size=19385date=2012-12-21T00:00:00
+file,ghost/master/OnMahjong.txt2f4d0129de084af6d3699843299468eesize=18859date=2012-12-21T00:00:00
 file,ghost/master/descript.txtf342534103d3c9da016dcc52574f13f6size=286date=2012-12-21T00:00:00
-file,ghost/master/dict/event.txta6b702c0fca8c4be2e7b2c2b60fdb225size=4266date=2012-12-21T00:00:00
+file,ghost/master/dict/event.txt92d510f0dbab2d51fafab3f87827e71fsize=4843date=2012-12-21T00:00:00
 file,ghost/master/dict/resource.txt62bab344ecb2d01a6d163bb10b6d0d07size=701date=2012-12-21T00:00:00
 file,ghost/master/dict/yaya_tmpl_util.txtdefef66d2b3d29854ad0a5b548e54122size=1564date=2012-12-21T00:00:00
-file,ghost/master/ex/TexasHoldem/dic_texas_holdem.dic05faa59a20ee39e8763f01e94d3654c6size=6941date=2012-12-21T00:00:00
+file,ghost/master/ex/TexasHoldem/dic_texas_holdem.dic5efc78f13852ac1f361086856a38d76csize=7593date=2012-12-21T00:00:00
 file,ghost/master/ex/TexasHoldem/dic_texas_holdem_ai.dic17fe9bd8885bedaa1e8009a2bf4b5faasize=7019date=2012-12-21T00:00:00
 file,ghost/master/icon.ico8c525821135617b22c52be6e4bb1a3afsize=15086date=2012-12-21T00:00:00
 file,ghost/master/saori/MahjongUtil/MahjongUtil.dll35dd69d234c4aea8a4d4050f2d0ad952size=225792date=2012-12-21T00:00:00
@@ -29,7 +29,7 @@ file,ghost/master/yaya.txtfd303a56d7b7bc1ab7f1522c1c0e2354size=2641date=2012-
 file,ghost/master/yaya_emerg.txte65295d4b94c64171b8b9d5a90ccc584size=1061date=2012-12-21T00:00:00
 file,ghost/master/yaya_emerg_dic.txt17fe89b7aca3e7f86cbfaae921853c4bsize=880date=2012-12-21T00:00:00
 file,install.txt965c71007cf2125be13278efde31b642size=69date=2012-12-21T00:00:00
-file,readme.txt4f83d293de148b45f56d8edcc70941f6size=2750date=2012-12-21T00:00:00
+file,readme.txt8c88e0543e48d5bfff6cca81e6fc682bsize=2750date=2012-12-21T00:00:00
 file,shell/master/descript.txt65fdce11ea482f851f00f8b01955f6fesize=811date=2012-12-21T00:00:00
 file,shell/master/element0101.png73ff74efb9982b38b42bd3333189331asize=13224date=2012-12-21T00:00:00
 file,shell/master/element0102.png8504f3c46bfc933d871e5377d69b2776size=12955date=2012-12-21T00:00:00
