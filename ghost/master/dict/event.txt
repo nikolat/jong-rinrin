@@ -148,3 +148,43 @@ On_tamaOpen
 	SHIORI3FW.Push_X_SSTP_PassThru('default.color', 'ffffff')
 	SHIORI3FW.Push_X_SSTP_PassThru('face', 'Nishiki-teki')
 }
+
+//**********************************************************
+// Sound
+//**********************************************************
+AQ.SoundDefault
+{
+	1
+}
+AQ.IsSoundEnabled
+{
+	if ISVAR('AQ.Sound') {
+		AQ.Sound
+	}
+	else {
+		AQ.SoundDefault()
+	}
+}
+sys.key.m
+{
+	if !ISVAR('AQ.Sound') {
+		AQ.Sound = !AQ.SoundDefault()
+	}
+	else {
+		AQ.Sound = !AQ.Sound
+	}
+	if AQ.Sound {
+		'\0\_qSound: ON\_q\e'
+	}
+	else {
+		'\0\_qSound: OFF\_q\e'
+	}
+}
+AQ.ExecAqtk
+{
+	_aqtk = _argv[0]
+	if AQ.IsSoundEnabled() {
+		_dll = 'saori/aqtk/AqTalkSaori.dll'
+		void FUNCTIONEX(_dll, 'PLAYASYNC', _aqtk)
+	}
+}

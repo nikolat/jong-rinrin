@@ -187,10 +187,7 @@ OnPokerNotify
 					_aqtk = "フォ'ールド"
 				}
 			}
-			if MJ.IsSoundEnabled() {
-				_dll = 'saori/aqtk/AqTalkSaori.dll'
-				void FUNCTIONEX(_dll, 'PLAYASYNC', _aqtk)
-			}
+			AQ.ExecAqtk(_aqtk)
 			"\0%(_say)\e"
 		}
 	}

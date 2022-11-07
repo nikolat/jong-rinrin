@@ -667,10 +667,7 @@ MJ.say : nonoverlap
 		}
 		}
 		'\0' + _say + '\e'
-		if MJ.IsSoundEnabled() {
-			_dll = 'saori/aqtk/AqTalkSaori.dll'
-			void FUNCTIONEX(_dll, 'PLAYASYNC', _aqtk)
-		}
+		AQ.ExecAqtk(_aqtk)
 	}
 	else {
 		case _word {
@@ -748,36 +745,4 @@ SHIORI3FW.GetHeaderValue
 		return
 	}
 	var.req.value[_index]
-}
-
-//**********************************************************
-// Sound
-//**********************************************************
-MJ.SoundDefault
-{
-	1
-}
-MJ.IsSoundEnabled
-{
-	if ISVAR('MJ.Sound') {
-		MJ.Sound
-	}
-	else {
-		MJ.SoundDefault()
-	}
-}
-sys.key.m
-{
-	if !ISVAR('MJ.Sound') {
-		MJ.Sound = !MJ.SoundDefault()
-	}
-	else {
-		MJ.Sound = !MJ.Sound
-	}
-	if MJ.Sound {
-		'\0\_qSound: ON\_q\e'
-	}
-	else {
-		'\0\_qSound: OFF\_q\e'
-	}
 }
