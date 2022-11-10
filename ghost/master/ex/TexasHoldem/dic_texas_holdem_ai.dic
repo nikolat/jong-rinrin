@@ -79,18 +79,17 @@ TH.AI.PreFlop {
 		}
 	}
 	_ret
-	return
 }
 
 TH.AI.Flop {
 	_ret  = IARRAY()
-	_hand_strength = FUNCTIONEX(TH.THUTILPATH(), 'hand', TH.hand[0], TH.hand[1])
-	_community_strength = FUNCTIONEX(TH.THUTILPATH(), 'hand', TH.community[0], TH.community[1], TH.community[2])
-	_strength = FUNCTIONEX(TH.THUTILPATH(), 'hand', TH.community[0], TH.community[1], TH.community[2], TH.hand[0], TH.hand[1])
+	_hand_strength = FUNCTIONEX(TH.THUTILPATH(), 'hand', TH.hand)
+	_community_strength = FUNCTIONEX(TH.THUTILPATH(), 'hand', TH.community)
+	_strength = FUNCTIONEX(TH.THUTILPATH(), 'hand', TH.community, TH.hand)
 	// ベットされている場合はコミュニティカードとペアになっている可能性
 	// があるのでそれを想定した勝率を計算する。
 	_rate = -1
-	if (TH.current_bet > 0) {
+/*	if (TH.current_bet > 0) {
 		_list = IARRAY()
 		foreach 'S,H,C,D'; _s {
 			_num  = TOINT(SUBSTR(TH.community[0], 1, 2))
@@ -110,13 +109,13 @@ TH.AI.Flop {
 		if (ARRAYSIZE(_list) > 0) {
 			_sum  = 0
 			foreach _list; _e {
-				_rate = TOREAL(FUNCTIONEX(TH.THUTILPATH(), 'estimate', ARRAYSIZE(TH.community), TH.community[0], TH.community[1], TH.community[2], TH.n_players, TH.hand[0], TH.hand[1], _e, 'N0'))
+				_rate = TOREAL(FUNCTIONEX(TH.THUTILPATH(), 'estimate', ARRAYSIZE(TH.community), TH.community, TH.n_players, TH.hand, _e, 'N0'))
 			}
 		}
-	}
+	}*/
 	// それ以外の場合はランダムハンドに対する勝率を計算する。
 	if (_rate < 0) {
-		_rate = TOREAL(FUNCTIONEX(TH.THUTILPATH(), 'estimate', ARRAYSIZE(TH.community), TH.community[0], TH.community[1], TH.community[2], TH.n_players, TH.hand[0], TH.hand[1]))
+		_rate = TOREAL(FUNCTIONEX(TH.THUTILPATH(), 'estimate', ARRAYSIZE(TH.community), TH.community, TH.n_players, TH.hand))
 	}
 
 	// 手札とコミュニティカードを合わせることで役が出来ているなら
@@ -145,14 +144,13 @@ TH.AI.Flop {
 		_ret  ,= 'fold'
 	}
 	_ret
-	return
 }
 
 TH.AI.Turn {
 	_ret  = IARRAY()
-	_strength = FUNCTIONEX(TH.THUTILPATH(), 'hand', TH.community[0], TH.community[1], TH.community[2], TH.community[3], TH.hand[0], TH.hand[1])
+	_strength = FUNCTIONEX(TH.THUTILPATH(), 'hand', TH.community, TH.hand)
 	_rate = -1
-	if (TH.current_bet > 0) {
+/*	if (TH.current_bet > 0) {
 		_list = IARRAY()
 		foreach 'S,H,C,D'; _s {
 			_num  = TOINT(SUBSTR(TH.community[0], 1, 2))
@@ -172,12 +170,12 @@ TH.AI.Turn {
 		if (ARRAYSIZE(_list) > 0) {
 			_sum  = 0
 			foreach _list; _e {
-				_rate = TOREAL(FUNCTIONEX(TH.THUTILPATH(), 'estimate', ARRAYSIZE(TH.community), TH.community[0], TH.community[1], TH.community[2], TH.n_players, TH.hand[0], TH.hand[1], _e, 'N0'))
+				_rate = TOREAL(FUNCTIONEX(TH.THUTILPATH(), 'estimate', ARRAYSIZE(TH.community), TH.community, TH.n_players, TH.hand, _e, 'N0'))
 			}
 		}
-	}
+	}*/
 	if (_rate < 0) {
-		_rate = TOREAL(FUNCTIONEX(TH.THUTILPATH(), 'estimate', ARRAYSIZE(TH.community), TH.community[0], TH.community[1], TH.community[2], TH.n_players, TH.hand[0], TH.hand[1]))
+		_rate = TOREAL(FUNCTIONEX(TH.THUTILPATH(), 'estimate', ARRAYSIZE(TH.community), TH.community, TH.n_players, TH.hand))
 	}
 	if (_strength > TH.strength) {
 		TH.strength = _strength
@@ -194,54 +192,8 @@ TH.AI.Turn {
 		_ret  ,= 'fold'
 	}
 	_ret
-	return
 }
 
 TH.AI.River {
-	_ret  = IARRAY()
-	_strength = FUNCTIONEX(TH.THUTILPATH(), 'hand', TH.community[0], TH.community[1], TH.community[2], TH.community[3], TH.community[4], TH.hand[0], TH.hand[1])
-	_rate = -1
-	if (TH.current_bet > 0) {
-		_list = IARRAY()
-		foreach 'S,H,C,D'; _s {
-			_num  = TOINT(SUBSTR(TH.community[0], 1, 2))
-			if (ASEARCH(_s + _num, _list) == -1) {
-				_list ,= _s + _num
-			}
-		}
-		_l  = IARRAY()
-		_l  ,= TH.hand
-		_l  ,= TH.community
-		foreach _l; _e {
-			_pos  = ASEARCH(_e, _list)
-			if (_pos != -1) {
-				_list[_pos] = IARRAY()
-			}
-		}
-		if (ARRAYSIZE(_list) > 0) {
-			_sum  = 0
-			foreach _list; _e {
-				_rate = TOREAL(FUNCTIONEX(TH.THUTILPATH(), 'estimate', ARRAYSIZE(TH.community), TH.community[0], TH.community[1], TH.community[2], TH.n_players, TH.hand[0], TH.hand[1], _e, 'N0'))
-			}
-		}
-	}
-	if (_rate < 0) {
-		_rate = TOREAL(FUNCTIONEX(TH.THUTILPATH(), 'estimate', ARRAYSIZE(TH.community), TH.community[0], TH.community[1], TH.community[2], TH.n_players, TH.hand[0], TH.hand[1]))
-	}
-	if (_strength > TH.strength) {
-		TH.strength = _strength
-		_ret  ,= 'raise'
-		_ret  ,= TH.pot
-	}
-	elseif (ASEARCH('check', _argv) != -1) {
-		_ret  ,= 'check'
-	}
-	elseif (_rate * (TH.pot + TH.total_bet + TH.current_bet) / TH.current_bet >= 100) {
-		_ret  ,= 'call'
-	}
-	else {
-		_ret  ,= 'fold'
-	}
-	_ret
-	return
+	TH.AI.Turn(_argv)
 }
