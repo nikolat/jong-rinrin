@@ -57,6 +57,18 @@ TH.talk.round.win
 	'\0\s[5]最後に笑うのはこの私だ。\e'
 	'\0\s[8]いいのか？私がもらっても。\e'
 }
+//ショーダウン引き分け
+TH.talk.round.draw
+{
+	'\0\s[5]やるじゃないか。\e'
+	'\0\s[8]命拾いしたな。\e'
+}
+//ショーダウン負け
+TH.talk.round.lose
+{
+	'\0\s[4]…通用しなかったか。\e'
+	'\0\s[3]いけると思ったのだがな…。\e'
+}
 //ドロップアウト
 TH.talk.round.dropout
 {
@@ -151,7 +163,7 @@ OnPokerNotify
 				SHIORI3FW.RegisterTempVar(/
 					'TH.stack', 'TH.hand', 'TH.community', 'TH.blind', 'TH.bet',/
 					'TH.pot', 'TH.current_bet', 'TH.players', 'TH.n_players',/
-					'TH.round_players', 'TH.total_bet', 'TH.strength', 'TH.save.dropout')
+					'TH.round_players', 'TH.total_bet', 'TH.strength', 'TH.save.fold', 'TH.save.dropout')
 				return
 			}
 			_i++
@@ -165,6 +177,7 @@ OnPokerNotify
 		TH.blind = TOINT(reference[2])
 		TH.bet = 0
 		TH.players = IARRAY()
+		TH.save.fold = 0
 		_i = 3
 		while (reference[_i]) {
 			TH.players ,= reference[_i]
@@ -226,6 +239,9 @@ OnPokerNotify
 			TH.n_players--
 		}
 		if _player == TH.GhostName() {
+			if _action == 'fold' {
+				TH.save.fold = 1
+			}
 			if ISFUNC('TH.talk.action.' + _action) {
 				EVAL('TH.talk.action.' + _action)
 			}
@@ -258,17 +274,25 @@ OnPokerNotify
 			_i++
 		}
 		if (ASEARCH(TH.GhostName(), _winner) != -1) {
-			//そのラウンドで勝った時のリアクション
-			TH.talk.round.win()
-			return
+			if ARRAYSIZE(_winner) == 1 {
+				//そのラウンドで勝った時のリアクション
+				TH.talk.round.win()
+			}
+			else {
+				//そのラウンドで引き分けた時のリアクション
+				TH.talk.round.draw()
+			}
 		}
-		if (TH.stack <= 0) {
+		elseif (TH.stack <= 0) {
 			//ゲームに負けた時のリアクション
 			if !TH.save.dropout {
 				TH.talk.round.dropout()
 				TH.save.dropout = 1
-				return
 			}
+		}
+		elseif !TH.save.fold {
+			//ショーダウンで負けた時のリアクション
+			TH.talk.round.lose()
 		}
 	}
 	elseif (_command == 'game_result') {
