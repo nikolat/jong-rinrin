@@ -32,7 +32,7 @@
 □SHIORIとして「YAYA」を使用しています。
 
     yaya-shiori
-      https://github.com/ponapalt/yaya-shiori
+      https://github.com/YAYA-shiori/yaya-shiori
 
 □SAORIとして「MahjongUtil.dll」を使用しています。
 
