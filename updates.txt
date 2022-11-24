@@ -29,7 +29,7 @@ file,ghost/master/yaya.txtfd303a56d7b7bc1ab7f1522c1c0e2354size=2641date=2012-
 file,ghost/master/yaya_emerg.txte65295d4b94c64171b8b9d5a90ccc584size=1061date=2012-12-21T00:00:00
 file,ghost/master/yaya_emerg_dic.txt17fe89b7aca3e7f86cbfaae921853c4bsize=880date=2012-12-21T00:00:00
 file,install.txt965c71007cf2125be13278efde31b642size=69date=2012-12-21T00:00:00
-file,readme.txt8c88e0543e48d5bfff6cca81e6fc682bsize=2750date=2012-12-21T00:00:00
+file,readme.txt0b1dd0c12903a53262d971b83364d603size=2753date=2012-12-21T00:00:00
 file,shell/master/descript.txt65fdce11ea482f851f00f8b01955f6fesize=811date=2012-12-21T00:00:00
 file,shell/master/element0101.png73ff74efb9982b38b42bd3333189331asize=13224date=2012-12-21T00:00:00
 file,shell/master/element0102.png8504f3c46bfc933d871e5377d69b2776size=12955date=2012-12-21T00:00:00
