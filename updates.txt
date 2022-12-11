@@ -2,7 +2,7 @@ charset,UTF-8
 file,delete.txt50573f2a12f71b23aeeea2503a95b60dsize=334date=2012-12-21T00:00:00
 file,ghost/master/MahjongAI.txt439974a833561dc14ab0a71a74d8ebaesize=17583date=2012-12-21T00:00:00
 file,ghost/master/OnMahjong.txt2f4d0129de084af6d3699843299468eesize=18859date=2012-12-21T00:00:00
-file,ghost/master/descript.txtf342534103d3c9da016dcc52574f13f6size=286date=2012-12-21T00:00:00
+file,ghost/master/descript.txt66c5c03195368885e6f45ed5fb58223bsize=296date=2012-12-21T00:00:00
 file,ghost/master/dict/event.txt92d510f0dbab2d51fafab3f87827e71fsize=4843date=2012-12-21T00:00:00
 file,ghost/master/dict/resource.txt62bab344ecb2d01a6d163bb10b6d0d07size=701date=2012-12-21T00:00:00
 file,ghost/master/dict/yaya_tmpl_util.txtdefef66d2b3d29854ad0a5b548e54122size=1564date=2012-12-21T00:00:00
