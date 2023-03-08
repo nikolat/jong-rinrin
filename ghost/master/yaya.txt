@@ -3,7 +3,6 @@
 // yaya.txt (設定ファイル)
 // original written by umeici.
 // change by yaya develop team.
-// edited by Don
 //******************************************************************************
 
 //------------------------------------------------------------------------------
@@ -34,13 +33,9 @@ messagetxt, messagetxt/japanese.txt	// ログに記録されるエラーメッ�
 //------------------------------------------------------------------------------
 //辞書
 //------------------------------------------------------------------------------
-dic, dict/event.txt
-dic, dict/resource.txt
-dic, dict/yaya_tmpl_util.txt
-dic, OnMahjong.txt
-dic, MahjongAI.txt
-dic, ex/TexasHoldem/dic_texas_holdem.dic
-dic, ex/TexasHoldem/dic_texas_holdem_ai.dic
+dicdir, dic/normal
+dicdir, dic/ex/Mahjong
+dicdir, dic/ex/TexasHoldem
 
 //------------------------------------------------------------------------------
 //セーブファイル暗号化

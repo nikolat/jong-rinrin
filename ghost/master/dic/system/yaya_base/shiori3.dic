@@ -104,12 +104,15 @@ load
 			RESTOREVAR('aya_variable.cfg')
 			FDEL('aya_variable.cfg')
 		}
-		SAVEVAR()
+		SAVEVAR
 	}
 
 	// 初回起動時の初期化
 	if ISVAR('aitalkinterval') == 0 {
 		aitalkinterval   = TALK_INTERVAL
+	}
+	if ISVAR('communicateratio') == 0 {
+		communicateratio = COM_RATIO
 	}
 	if ISVAR('ghostupmin_last') == 0 {
 		ghostupmin_last = 0
@@ -120,9 +123,9 @@ load
 	ghostuptimes += 1
 
 	// 毎回起動時の初期化
-	SHIORI3FW.ResetAITalkInterval()
+	SHIORI3FW.ResetAITalkInterval(-1)
 
-	_sec = GETSECCOUNT()
+	_sec = GETSECCOUNT
 
 	SHIORI3FW.SaveVarCount = 0
 	SHIORI3FW.LastTalk     = ''
@@ -157,7 +160,7 @@ load
 	basewarename           = ''
 	basewarenameex         = ''
 	sender                 = ''
-	ghostbootmin           = GETSECCOUNT() / 60
+	ghostbootmin           = GETSECCOUNT / 60
 
 	S_CHARSET = GETSETTING('charset.output')
 
@@ -210,7 +213,7 @@ unload
 	var.req.value = IARRAY
 	var.req.rawvalue = IARRAY
 
-	ghostupmin_last = ghostupmin_total()
+	ghostupmin_last = ghostupmin_total
 
 	AyaLoad.FuncEnumExec('OnGhostUnload','descending')
 	AyaLoad.FuncEnumExec('OnSystemUnload','descending')
@@ -583,7 +586,7 @@ SHIORI3FW.PushErrorAlart{
 //------------------------------------------------------------------------------
 SHIORI3FW.GetLastErrorLog
 {
-	_errors = GETERRORLOG()
+	_errors = GETERRORLOG
 
 	_errorlevel_text = 'SHIORI3FW.ERRORLOGLEVEL'
 	_errorlevel = 2
@@ -781,8 +784,10 @@ SHIORI3FW.RaiseIDEvent
 	SHIORI3FW.MakeReferenceAndPassThruInsVariable
 
 	_event = SHIORI3FW.EventidTranslate
+	_event_fallback = _event
 
 	_result_internal = ''
+
 	if SHIORI3FW.Eventid == 'OnSecondChange' {
 		// OnSecondChangeならランダムトーク関連処理
 		_event = SHIORI3FW.ControlAITalk(_event)
@@ -795,10 +800,10 @@ SHIORI3FW.RaiseIDEvent
 		}
 	}
 
-	_can_talk = SHIORI3FW.CanTalk()
+	_can_talk = SHIORI3FW.CanTalk
 	if _can_talk != SHIORI3FW.CanTalkFlag {
 		if _can_talk {
-			SHIORI3FW.TalkEndTime = GETSECCOUNT()
+			SHIORI3FW.TalkEndTime = GETSECCOUNT
 		}
 		SHIORI3FW.CanTalkFlag = _can_talk
 	}
@@ -809,12 +814,23 @@ SHIORI3FW.RaiseIDEvent
 		_result = TOSTR(EVAL(_event))
 	}
 	if _result == '' {
+		if _event != _event_fallback {
+			if ISFUNC(_event_fallback) {
+				_result = TOSTR(EVAL(_event_fallback))
+			}
+		}
+	}
+	if _result == '' {
 		_result = _result_internal
 	}
 
-	if _result != '' {
+	if _result != '' { //トークあり
 		// 遅延EVAL
-		_talk = RE_SPLIT(_result,'(' + EVAL_DELIM + '|' + CHAIN_DELIM + ')')
+		_talk=IARRAY
+		if SHIORI3FW.ENABLE_DELAYED_EVAL
+			_talk = RE_SPLIT(_result,'(' + EVAL_DELIM + '|' + CHAIN_DELIM + ')')
+		else
+			_talk = RE_SPLIT(_result,'(' + CHAIN_DELIM + ')')
 		_delim = RE_GETSTR
 		_n = ARRAYSIZE(_delim)
 
@@ -834,7 +850,7 @@ SHIORI3FW.RaiseIDEvent
 
 		//後から遅延設定
 		for _i = 0 ; _i < _n ; _i += 1 {
-			if _delim[_i] == EVAL_DELIM {
+			if SHIORI3FW.ENABLE_DELAYED_EVAL && _delim[_i] == EVAL_DELIM {
 				// 遅延EVAL
 				void EVAL(_talk[_i + 1])
 			}
@@ -851,14 +867,20 @@ SHIORI3FW.RaiseIDEvent
 			SHIORI3FW.LastTalk = _talk[0]
 			if _event == 'OnAITalkNewEvent' {
 				SHIORI3FW.LastAITalk = _talk[0]
-				SHIORI3FW.ResetAITalkInterval()
+				SHIORI3FW.ResetAITalkInterval(STRLEN(_talk[0]))
 			}
 			if 'Surface' !_in_ _event {
 				if SHIORI3FW.RemoveAllTags(_talk[0]) != '' {
-					SHIORI3FW.LastTalkTime = GETSECCOUNT()
+					SHIORI3FW.LastTalkTime = GETSECCOUNT
 				}
 			}
 			_talk[0]
+		}
+	}
+	else { //トークなし
+		if _event == 'OnAITalkNewEvent' {
+			SHIORI3FW.LastAITalk = ''
+			SHIORI3FW.ResetAITalkInterval(0)
 		}
 	}
 
@@ -875,28 +897,46 @@ SHIORI3FW.RaiseIDEvent
 SHIORI3FW.MakeEmptyResponse
 {
 	case _argv[0] {
-		when 'OnFirstBoot', 'OnBoot', 'OnWindowStateRestore', 'OnGhostChanged'
+		when 'OnFirstBoot', 'OnGhostChanged' {
+			_evt = SHIORI3FW.TranslateEvent('OnBoot')
+			if ISFUNC(_evt) {
+				//SSP側でフォールバックするのでここでは204を返す
+				"SHIORI/3.0 204 No Content%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF)"
+			}
+			else {
+				// OnBootハンドラもない時に、スコープ0/1の基本サーフィスを出す必要があるイベント
+				"SHIORI/3.0 200 OK%(C_CRLF)Sender: AYA%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF)/
+				Value: \0\s[0]\1\s[10]\e%(C_CRLF)"
+			}
+		}
+		when 'OnBoot', 'OnWindowStateRestore' {
 			// スコープ0/1の基本サーフィスを出す必要があるイベント
 			"SHIORI/3.0 200 OK%(C_CRLF)Sender: AYA%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF)/
 			Value: \0\s[0]\1\s[10]\e%(C_CRLF)"
-		when 'OnClose'
+		}
+		when 'OnClose' {
 			// 終了指示を出す必要があるイベント
 			"SHIORI/3.0 200 OK%(C_CRLF)Sender: AYA%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF)/
 			Value: \0\-\e%(C_CRLF)"
-		others
+		}
+		others {
 			// 上記以外では204を返送して良い
 			"SHIORI/3.0 204 No Content%(C_CRLF)Charset: %(S_CHARSET)%(C_CRLF)"
+		}
 	}
 }
 
 //------------------------------------------------------------------------------
 //関数名：SHIORI3FW.ResetAITalkInterval
 //機能　：AIトーク発動処理カウンタのリセット
+//引数　：_argv[0] スクリプトの長さ もしくは初期化時-1
 //------------------------------------------------------------------------------
 SHIORI3FW.ResetAITalkInterval
 {
-	SHIORI3FW.LastAITalkTime = GETSECCOUNT()
-	SHIORI3FW.IsSurfaceRestoreComplete = 0
+	SHIORI3FW.LastAITalkTime = GETSECCOUNT
+	if _argv[0] != 0 {
+		SHIORI3FW.IsSurfaceRestoreComplete = 0
+	}
 	SHIORI3FW.IsAITalkComplete = 0
 }
 
@@ -921,10 +961,10 @@ SHIORI3FW.ControlAITalk
 			}
 		}
 		if aitalkinterval > 0 {// トーク間隔が非0
-			_sec = GETSECCOUNT()
+			_sec = GETSECCOUNT
 			_diff = _sec - SHIORI3FW.LastAITalkTime
 			if _diff >= aitalkinterval {// トーク間隔の設定時間を越えた
-				if SHIORI3FW.CanTalk() {
+				if SHIORI3FW.CanTalk {
 					if (_sec - SHIORI3FW.LastTalkTime) >= 6 {
 						if (_sec - SHIORI3FW.TalkEndTime) >= 6 {
 							if SHIORI3FW.IsAITalkComplete == 0 {
@@ -936,7 +976,7 @@ SHIORI3FW.ControlAITalk
 				}
 			}
 			elseif _diff == (aitalkinterval*2/3) {//2/3でSurfaceRestore
-				if SHIORI3FW.CanTalk() {
+				if SHIORI3FW.CanTalk {
 					if (_sec - SHIORI3FW.LastTalkTime) >= 4 {
 						if (_sec - SHIORI3FW.TalkEndTime) >= 2 {
 							if SHIORI3FW.IsSurfaceRestoreComplete == 0 {
@@ -1064,7 +1104,7 @@ SHIORI3FW.StartChainTalk
 		CHAIN.IDName = _argv[0]
 		CHAIN.Script = ''
 		CHAIN.Index  = 0
-		CHAIN.StartTime = GETSECCOUNT()
+		CHAIN.StartTime = GETSECCOUNT
 	}
 }
 
@@ -1084,7 +1124,7 @@ SHIORI3FW.StartChainTalkScriptDirect
 		CHAIN.IDName = ''
 		CHAIN.Script = _argv[0]
 		CHAIN.Index  = 0
-		CHAIN.StartTime = GETSECCOUNT()
+		CHAIN.StartTime = GETSECCOUNT
 	}
 }
 
@@ -1149,7 +1189,7 @@ SHIORI3FW.EndChainTalk
 SHIORI3FW.ChainTime
 {
 	if CHAIN.StartTime {
-		GETSECCOUNT() - TOINT(CHAIN.StartTime)
+		GETSECCOUNT - TOINT(CHAIN.StartTime)
 	}
 	else {
 		0
@@ -1498,8 +1538,8 @@ SHIORI3FW.RequestLib
 //------------------------------------------------------------------------------
 SHIORI3FW.MakeValueexVariable
 {
-	SHIORI3FW.ClearValueexVariable()
-	valueex = IARRAY()
+	SHIORI3FW.ClearValueexVariable
+	valueex = IARRAY
 	_sz = ARRAYSIZE(var.lib.key)
 	for _i = 0; _i < _sz; _i++ {
 		if SUBSTR(_keyname = var.lib.key[_i], 0, 5) == 'Value' {
@@ -1812,6 +1852,15 @@ SHIORI3EV.OnBalloonChange : void
 //------------------------------------------------------------------------------
 SHIORI3EV.OnAITalkNewEvent
 {
+	if RAND(100) < communicateratio
+	{
+		//---- communicateratio % の率で他ゴーストへ話しかけ
+		if ISFUNC('StartCommunicate') {
+			StartCommunicate
+			return
+		}
+		//else: ?
+	}
 	//互換用処理
 	_old_name = SHIORI3FW.TranslateEvent('OnAiTalk')
 	if ISFUNC(_old_name) {
@@ -1919,8 +1968,9 @@ month   { GETTIME[1] }
 day     { GETTIME[2] }
 weekday { GETTIME[3] }
 hour    { GETTIME[4] }
-ampm    { if hour >= 12; 1;   else; 0    }
-hour12  { if ampm; hour - 12; else; hour }
+ampm	{ hour / 12 }
+hour12	{ hour % 12 }
+hour12ex{ if hour12 == 0; 12 ; else ; hour12 }
 minute  { GETTIME[5] }
 second  { GETTIME[6] }
 
@@ -1951,12 +2001,12 @@ SHIORI3FW.GetTickInfo
 
 ghostupmin
 {
-	(GETSECCOUNT() / 60) - ghostbootmin
+	(GETSECCOUNT / 60) - ghostbootmin
 }
 
 ghostupmin_total
 {
-	ghostupmin_last + ghostupmin()
+	ghostupmin_last + ghostupmin
 }
 
 //******************************************************************************
