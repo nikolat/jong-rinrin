@@ -33,7 +33,7 @@ MJ.PlayerName
 // Reference1: サーバコマンド(gamestart|gameend|...)
 // Reference2以降: サーバコマンド追加情報
 //**********************************************************
-ExternalEvent.OnMahjong
+OnMahjong
 {
 	//イベントログ垂れ流し
 	if MJ.ShowAllLogMode() {
@@ -43,7 +43,10 @@ ExternalEvent.OnMahjong
 		MJ.Main()
 	}
 }
-
+ExternalEvent.OnMahjong
+{
+	OnMahjong()
+}
 //**********************************************************
 // イベントログ垂れ流し
 //**********************************************************
