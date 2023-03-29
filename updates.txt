@@ -11,8 +11,8 @@ file,ghost/master/dic/normal/resource.dic62bab344ecb2d01a6d163bb10b6d0d07size=
 file,ghost/master/dic/normal/yaya_tmpl_util.dicdefef66d2b3d29854ad0a5b548e54122size=1564date=2012-12-21T00:00:00
 file,ghost/master/dic/system/_loading_order.txt0868241bb617c7c18013e2c024d18dd9size=18date=2012-12-21T00:00:00
 file,ghost/master/dic/system/yaya_base/_loading_order.txt9c350c2c9c08f635bff5eaae149af8c8size=103date=2012-12-21T00:00:00
-file,ghost/master/dic/system/yaya_base/config.diced9161a3525e17c9f740e29fe4c131c8size=2921date=2012-12-21T00:00:00
-file,ghost/master/dic/system/yaya_base/shiori3.dic45fda0ae38ddc8c255d0ff8bfd240fb7size=52530date=2012-12-21T00:00:00
+file,ghost/master/dic/system/yaya_base/config.dic44707dafa1e7e605e2816ca68c2a84f9size=2592date=2012-12-21T00:00:00
+file,ghost/master/dic/system/yaya_base/shiori3.dic3df41633c22d245149d2421e43b04b34size=52215date=2012-12-21T00:00:00
 file,ghost/master/icon.ico8c525821135617b22c52be6e4bb1a3afsize=15086date=2012-12-21T00:00:00
 file,ghost/master/saori/MahjongUtil/MahjongUtil.dll35dd69d234c4aea8a4d4050f2d0ad952size=225792date=2012-12-21T00:00:00
 file,ghost/master/saori/MahjongUtil/license.txt9aba8461527f8f2f7c5e01ade95a59a6size=3037date=2012-12-21T00:00:00
