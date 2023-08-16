@@ -10,7 +10,7 @@ On_useorigin1 { 1 }
 On_sakura.portalsites
 {
 	"/
-		Disc-2%(CHR(1))http://disc2.s56.xrea.com/%(CHR(1))%(CHR(1))%(CHR(2))/
+		うかフィード%(CHR(1))https://feed.ukagaka.net/%(CHR(1))%(CHR(1))%(CHR(2))/
 	"
 }
 On_sakura.recommendsites
