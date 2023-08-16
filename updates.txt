@@ -7,7 +7,7 @@ file,ghost/master/dic/ex/Mahjong/OnMahjong.dicc4c25668b0880907349261bc05108ec1
 file,ghost/master/dic/ex/TexasHoldem/dic_texas_holdem.dicf4301c6851337a1a011e997f4a2b6123size=8194date=2012-12-21T00:00:00
 file,ghost/master/dic/ex/TexasHoldem/dic_texas_holdem_ai.dicca7fd36def5e8e5575eeef6c8da3dc72size=5577date=2012-12-21T00:00:00
 file,ghost/master/dic/normal/event.dic92d510f0dbab2d51fafab3f87827e71fsize=4843date=2012-12-21T00:00:00
-file,ghost/master/dic/normal/resource.dic62bab344ecb2d01a6d163bb10b6d0d07size=701date=2012-12-21T00:00:00
+file,ghost/master/dic/normal/resource.diced6890516586744e176a618627dd3f81size=712date=2012-12-21T00:00:00
 file,ghost/master/dic/normal/yaya_tmpl_util.dicdefef66d2b3d29854ad0a5b548e54122size=1564date=2012-12-21T00:00:00
 file,ghost/master/dic/system/_loading_order.txt0868241bb617c7c18013e2c024d18dd9size=18date=2012-12-21T00:00:00
 file,ghost/master/dic/system/yaya_base/_loading_order.txt9c350c2c9c08f635bff5eaae149af8c8size=103date=2012-12-21T00:00:00
