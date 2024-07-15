@@ -524,7 +524,7 @@ MJ.GetKakanHai
 	_arHai = MJ.GetTehaiArrayWithoutFuro(_tehai)
 	_arRet = IARRAY()
 	foreach ARRAYDEDUP(_arHai); _h {
-		if  "<%(_h)%(_h)%(_h)>" _in_ _tehai {
+		if "<%(_h)%(_h)%(_h)>" _in_ _tehai {
 			_arRet ,= _h
 		}
 	}
