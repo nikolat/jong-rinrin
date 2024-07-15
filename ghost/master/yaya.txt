@@ -36,6 +36,7 @@ messagetxt, messagetxt/japanese.txt	// ログに記録されるエラーメッ�
 dicdir, dic/normal
 dicdir, dic/ex/Mahjong
 dicdir, dic/ex/TexasHoldem
+dicdir, dic/ex/Nostr
 
 //------------------------------------------------------------------------------
 //セーブファイル暗号化

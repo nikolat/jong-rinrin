@@ -1,0 +1,62 @@
+OnNostr
+{
+	_protocol_version = reference[0]
+	_kind = reference[1]
+	if _protocol_version != 'Nostr/0.4' || _kind != 42
+		'\e'
+	_content = reference[2]
+	if RE_SEARCH(_content, 'sutehai\?\ssutehai\s([1-9][mpsz])') {
+		"\0\_q%(RE_GETSTR()[1])\e"
+	}
+	elseif RE_SEARCH(_content, 'naku\?\s(ron|kan|pon|chi)(\s[1-9][mpsz]\s[1-9][mpsz])?') {
+		_word = RE_GETSTR()[1]
+		_say = ''
+		_aqtk = ''
+		case _word {
+		when 'chi' {
+			_say = '\s[6]チー'
+			_aqtk = "ち'ー"
+		}
+		when 'pon' {
+			_say = '\s[6]ポン'
+			_aqtk = "ぽ'ん"
+		}
+		when 'kan' {
+			_say = '\s[6]カン'
+			_aqtk = "か'ん"
+		}
+		when 'ron' {
+			_say = '\s[8]ロン'
+			_aqtk = "ろ'ん"
+		}
+		}
+		"\0\_q%(_say)\e"
+		if _aqtk != ''
+			AQ.ExecAqtk(_aqtk)
+	}
+	elseif RE_SEARCH(_content, 'sutehai\?\s(ankan|kakan|richi|tsumo)(\s[1-9][mpsz])?') {
+		_word = RE_GETSTR()[1]
+		_say = ''
+		_aqtk = ''
+		case _word {
+		when 'tsumo' {
+			_say = '\s[5]ツモ'
+			_aqtk = "つ'も"
+		}
+		when 'richi' {
+			_say = '\s[5]リーチ'
+			_aqtk = "り'ーち"
+			MJ.Save.Richi = 1
+		}
+		when 'ankan', 'kakan' {
+			_say = '\s[6]カン'
+			_aqtk = "か'ん"
+		}
+		}
+		"\0\_q%(_say)\e"
+		AQ.ExecAqtk(_aqtk)
+	}
+	else {
+		'\e'
+	}
+}

@@ -11,3 +11,4 @@ dicdir, dic/system		// YAYA:システム辞書。必ず最初に指定するこ�
 iolog.filter.mode, allowlist
 iolog.filter.keyword, OnMahjong
 iolog.filter.keyword, OnPoker
+iolog.filter.keyword, OnNostr
