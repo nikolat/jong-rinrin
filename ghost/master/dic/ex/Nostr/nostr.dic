@@ -6,7 +6,9 @@ OnNostr
 		'\e'
 	_content = reference[2]
 	if RE_SEARCH(_content, 'sutehai\?\ssutehai\s([1-9][mpsz])') {
-		"\0\_q%(RE_GETSTR()[1])\e"
+		_pai = RE_GETSTR()[1]
+		_url = Nostr.GetPaiUrl(_pai)
+		"\0\_q\_b[%(_url),centerx,centery,--option=opaque,--option=use_self_alpha,--option=background]\e"
 	}
 	elseif RE_SEARCH(_content, 'naku\?\s(ron|kan|pon|chi)(\s[1-9][mpsz]\s[1-9][mpsz])?') {
 		_word = RE_GETSTR()[1]
@@ -59,4 +61,37 @@ OnNostr
 	else {
 		'\e'
 	}
+}
+
+Nostr.GetPaiUrl
+{
+	_pai = SUBSTR(_argv[0], 1, 1) + SUBSTR(_argv[0], 0, 1)
+	_name = ''
+	case _pai {
+	when 'z1' {
+		_name = 'east'
+	}
+	when 'z2' {
+		_name = 'south'
+	}
+	when 'z3' {
+		_name = 'west'
+	}
+	when 'z4' {
+		_name = 'north'
+	}
+	when 'z5' {
+		_name = 'white'
+	}
+	when 'z6' {
+		_name = 'green'
+	}
+	when 'z7' {
+		_name = 'red'
+	}
+	others {
+		_name = _pai
+	}
+	}
+	"https://awayuki.github.io/emoji/mahjong-%(_name).png"
 }
