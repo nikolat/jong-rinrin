@@ -23,7 +23,7 @@ OnNostr
 			_say = '\s[6]ポン'
 			_aqtk = "ぽ'ん"
 		}
-		when 'kan' {
+		when 'ankan','kakan' {
 			_say = '\s[6]カン'
 			_aqtk = "か'ん"
 		}
