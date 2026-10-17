@@ -11,9 +11,10 @@ file,ghost/master/dic/normal/event.dic92d510f0dbab2d51fafab3f87827e71fsize=484
 file,ghost/master/dic/normal/resource.diced6890516586744e176a618627dd3f81size=712date=2012-12-21T00:00:00
 file,ghost/master/dic/normal/yaya_tmpl_util.dicdefef66d2b3d29854ad0a5b548e54122size=1564date=2012-12-21T00:00:00
 file,ghost/master/dic/system/_loading_order.txt0868241bb617c7c18013e2c024d18dd9size=18date=2012-12-21T00:00:00
-file,ghost/master/dic/system/yaya_base/_loading_order.txt9c350c2c9c08f635bff5eaae149af8c8size=103date=2012-12-21T00:00:00
+file,ghost/master/dic/system/yaya_base/_loading_order.txt608cdbb0ef2328a7f2569d3e796ccd95size=126date=2012-12-21T00:00:00
 file,ghost/master/dic/system/yaya_base/config.dic44707dafa1e7e605e2816ca68c2a84f9size=2592date=2012-12-21T00:00:00
-file,ghost/master/dic/system/yaya_base/shiori3.dicac4750d7081a6607ac1c26184677020asize=55020date=2012-12-21T00:00:00
+file,ghost/master/dic/system/yaya_base/lint.dic1cf05026921eac31d2c89d225cefc2cesize=21118date=2012-12-21T00:00:00
+file,ghost/master/dic/system/yaya_base/shiori3.dic6711aa1268d0909fd6593cf0369a5493size=71837date=2012-12-21T00:00:00
 file,ghost/master/icon.ico8c525821135617b22c52be6e4bb1a3afsize=15086date=2012-12-21T00:00:00
 file,ghost/master/saori/MahjongUtil/MahjongUtil.dllccb07c6e3bd917cf5f8a7b7788a3b683size=228352date=2012-12-21T00:00:00
 file,ghost/master/saori/MahjongUtil/license.txt9aba8461527f8f2f7c5e01ade95a59a6size=3037date=2012-12-21T00:00:00
@@ -26,7 +27,7 @@ file,ghost/master/saori/aqtk/AqTalkSaori.dll3ca3db02a21292ac7fdbbe572f7e4254si
 file,ghost/master/saori/aqtk/AqTalkSaori_readme.txtb8b46f2feafc004edd8dfa77397b0260size=5708date=2012-12-21T00:00:00
 file,ghost/master/saori/aqtk/AquesTalk.dllf97a031451220238b21ada12dd2ba6b7size=110592date=2012-12-21T00:00:00
 file,ghost/master/system_config.txtf3499b4db68a1bf66972c25be5fc9184size=694date=2012-12-21T00:00:00
-file,ghost/master/yaya.dll7ca71c0691df0379655530fcf6d0fa7csize=884736date=2012-12-21T00:00:00
+file,ghost/master/yaya.dllf0b27a44b379d74049cf704580ec563dsize=2125824date=2012-12-21T00:00:00
 file,ghost/master/yaya.txtcb3c4cebab2c087e86f843916fb409b6size=2519date=2012-12-21T00:00:00
 file,ghost/master/yaya_emerg.txtd9ee78e2068ff80d809325bd4fa8228bsize=1055date=2012-12-21T00:00:00
 file,install.txt965c71007cf2125be13278efde31b642size=69date=2012-12-21T00:00:00
